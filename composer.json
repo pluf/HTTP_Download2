@@ -1,40 +1,41 @@
 {
-    "authors": [
-        {
-            "email": "jausions@php.net",
-            "name": "Philippe Jausions",
-            "role": "Lead"
-        },
-        {
-            "email": "mike@php.net",
-            "name": "Michael Wallner",
-            "role": "Lead"
-        }
-    ],
-    "autoload": {
-        "psr-0": {
-            "HTTP": "./"
-        }
-    },
-    "description": "More info available on: http://pear.php.net/package/HTTP_Download2",
-    "include-path": [
-        "./"
-    ],
-    "license": "BSD, revised",
-    "name": "pear/http_download2",
-    "support": {
-        "issues": "http://pear.php.net/bugs/search.php?cmd=display&package_name[]=HTTP_Download",
-        "source": "https://github.com/pear/HTTP_Download"
-    },
-    "type": "library",
-    "require": {
-        "pear/pear_exception": "*",
-        "pear/pear": "*"
-    },
-    "require-dev": {
-        "phpunit/phpunit": "*"
-    },
-    "suggest": {
-        "pear/archive_tar": "Install optionally via your project's composer.json"
-    }
+	"authors" : [{
+			"email" : "jausions@php.net",
+			"name" : "Philippe Jausions",
+			"role" : "Lead"
+		}, {
+			"email" : "mike@php.net",
+			"name" : "Michael Wallner",
+			"role" : "Lead"
+		}
+	],
+	"autoload" : {
+		"psr-0" : {
+			"HTTP" : "./"
+		}
+	},
+	"description" : "More info available on: http://pear.php.net/package/HTTP_Download2",
+	"include-path" : [
+		"./"
+	],
+	"license" : "MIT",
+	"name" : "pluf/http_download2",
+	"support" : {
+		"issues" : "https://github.com/pluf/http_download2",
+		"source" : "https://github.com/pluf/http_download2",
+		"email" : "info@pluf.ir",
+		"forum" : "https://github.com/pluf/http_download2",
+		"wiki" : "https://github.com/pluf/http_download2"
+	},
+	"type" : "library",
+	"require" : {
+		"pear/pear_exception" : "*",
+		"pear/pear" : "*"
+	},
+	"require-dev" : {
+		"phpunit/phpunit" : "*"
+	},
+	"suggest" : {
+		"pear/archive_tar" : "Install optionally via your project's composer.json"
+	}
 }
