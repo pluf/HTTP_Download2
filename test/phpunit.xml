@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit colors="true">
+    <testsuites>
+        <testsuite name="Pluf">
+            <directory>./Header/</directory>
+            <directory>./Download2/</directory>
+        </testsuite>
+    </testsuites>
+</phpunit>
