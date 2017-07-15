@@ -49,7 +49,7 @@ require_once 'HTTP/Download2/Exception.php';
 /**
  * Requires HTTP_Header
  */
-require_once 'HTTP/Header.php';
+require_once 'HTTP/Header2.php';
 // }}}
 
 // {{{ constants
@@ -277,7 +277,7 @@ class HTTP_Download2
      */
     public function __construct($params = array())
     {
-        $this->HTTP = new HTTP_Header;
+        $this->HTTP = new HTTP_Header2;
         $this->_error = $this->setParams($params);
     }
     // }}}

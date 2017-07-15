@@ -34,6 +34,29 @@
  * ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
  * POSSIBILITY OF SUCH DAMAGE.
  */
+
+/**
+ * Autoload function.
+ *
+ * @param
+ *        	string Class name.
+ */
+function __autoload($class) {
+    if (class_exists ( $class, false )) {
+        return;
+    }
+    $file = str_replace ( '_', DIRECTORY_SEPARATOR, $class ) . '.php';
+    if(!file_exists(stream_resolve_include_path($file))){
+        return ;
+    }
+    include $file;
+    if (! class_exists ( $class, false )) {
+        $error = 'Impossible to load the class: ' . $class . "\n" . 'Tried to include: ' . $file . "\n" . 'Include path: ' . get_include_path ();
+        throw new Exception ( $error );
+    }
+}
+spl_autoload_register('__autoload');
+
 define('PHPUnit_MAIN_METHOD', 'PHPUnit_TextUI_Command::main');
 
 $files = array(
