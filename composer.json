@@ -2,6 +2,7 @@
 	"name" : "pluf/http2",
 	"license" : "MIT",
 	"description" : "Pluf HTTP package",
+	"type" : "library",
 	"authors" : [{
 			"email" : "jausions@php.net",
 			"name" : "Philippe Jausions",
@@ -10,6 +11,15 @@
 			"email" : "mike@php.net",
 			"name" : "Michael Wallner",
 			"role" : "Lead"
+		}, {
+			"name" : "Mostafa Barmshory",
+			"email" : "mostafa.barmshory@dpq.co.ir"
+		}, {
+			"name" : "Mohammad hadi Mansouri",
+			"email" : "mohammad.hadi.mansouri@dpq.co.ir"
+		}, {
+			"name" : "Mahdi Arighiani",
+			"email" : "mahdi.arghiani@dpq.co.ir"
 		}
 	],
 	"autoload" : {
@@ -27,14 +37,16 @@
 		"forum" : "https://github.com/pluf/http_download2",
 		"wiki" : "https://github.com/pluf/http_download2"
 	},
-	"type" : "library",
 	"require" : {
 		"pear/pear_exception" : "*",
 		"pear/pear" : "*",
 		"pear/http2" : "*"
 	},
 	"require-dev" : {
-		"phpunit/phpunit" : "*"
+		"phpunit/phpunit" : "5.7.14",
+		"phpunit/php-invoker" : "^1.1",
+		"phpunit/dbunit" : "^2.0",
+		"phpunit/phpunit-story" : "^1.0"
 	},
 	"suggest" : {
 		"pear/archive_tar" : "Install optionally via your project's composer.json"
