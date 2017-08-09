@@ -843,7 +843,7 @@ class HTTP_Download2
                 if (is_resource($this->handle)) {
                     $content = fstat($this->handle);
                 } else {
-                    stat($this->file);
+                    $content = stat($this->file);
                 }
 
                 extract($content);
