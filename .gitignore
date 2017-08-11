@@ -4,3 +4,11 @@ composer.phar
 vendor
 /.buildpath
 /.project
+
+
+# Eclipse
+.settings
+
+# KDE
+.directory
+
