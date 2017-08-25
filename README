@@ -1,3 +1,7 @@
+# HTTP2 
+
+[![Build Status](https://travis-ci.org/pluf/http2.svg?branch=master)](https://travis-ci.org/pluf/http2)
+
 This package is http://pear.php.net/package/HTTP_Download and has been migrated from http://svn.php.net/repository/pear/packages/HTTP_Download
 
 Please report all new issues via the PEAR bug tracker.
