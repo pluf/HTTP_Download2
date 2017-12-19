@@ -1,6 +1,8 @@
 # HTTP2 
 
 [![Build Status](https://travis-ci.org/pluf/http2.svg?branch=master)](https://travis-ci.org/pluf/http2)
+[![Maintainability](https://api.codeclimate.com/v1/badges/513f356bdf26065cc009/maintainability)](https://codeclimate.com/github/pluf/http2/maintainability)
+[![Test Coverage](https://api.codeclimate.com/v1/badges/513f356bdf26065cc009/test_coverage)](https://codeclimate.com/github/pluf/http2/test_coverage)
 
 This package is http://pear.php.net/package/HTTP_Download and has been migrated from http://svn.php.net/repository/pear/packages/HTTP_Download
 
