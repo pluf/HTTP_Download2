@@ -1,14 +1,19 @@
-# composer related
-composer.lock
-composer.phar
-vendor
-/.buildpath
-/.project
-
-
 # Eclipse
-.settings
+#.buildpath
+/.settings/
 
-# KDE
-.directory
 
+# Examples
+/site/tenant
+
+# Composer
+/vendor/
+composer.lock
+composer-setup.php
+composer.phar
+
+clover.xml
+/build/
+
+# netbeans
+/nbproject/private/
