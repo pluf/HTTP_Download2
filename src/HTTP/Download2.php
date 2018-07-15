@@ -190,7 +190,7 @@ class HTTP_Download2
         'Pragma'        => 'cache',
         'Cache-Control' => 'public, must-revalidate, max-age=0',
         'Accept-Ranges' => 'bytes',
-        'X-Sent-By'     => 'PEAR::HTTP::Download2'
+        'X-Sent-By'     => 'Pluf::HTTP::Download2'
     );
 
     /**
