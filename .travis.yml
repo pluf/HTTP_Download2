@@ -1,7 +1,6 @@
 language: php
 php:
-  - '5.6'
-  - '7.1'
+  - '7.2'
 
 services:
   - mysql
@@ -29,6 +28,7 @@ install:
   
 script:
   - php run.php
+  # CODECLIMATE_REPO_TOKEN reqired
   - vendor/bin/test-reporter
 
 after_success:
