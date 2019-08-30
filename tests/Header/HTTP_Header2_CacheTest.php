@@ -4,11 +4,11 @@
  *
  * Id$
  */
-// require_once 'PHPUnit/Framework/TestCase.php';
+use PHPUnit\Framework\TestCase;
 require_once 'HTTP/Header2/Cache.php';
 // require_once 'HTTP/Request2.php';
 
-class HTTP_Header2_CacheTest extends PHPUnit_Framework_TestCase
+class HTTP_Header2_CacheTest extends TestCase
 {
 
     function testgetCacheStart ()

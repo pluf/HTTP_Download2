@@ -4,12 +4,13 @@
  *
  * $Id$
  */
-// require_once 'PHPUnit/Framework/TestCase.php';
+use PHPUnit\Framework\TestCase;
+
 require_once 'HTTP/Header2.php';
 // require_once 'HTTP/Request2.php';
 // require_once 'Net/URL2.php';
 
-class HTTP_Header2Test extends PHPUnit_Framework_TestCase
+class HTTP_Header2Test extends TestCase
 {
 
     function testHTTP_Header2 ()

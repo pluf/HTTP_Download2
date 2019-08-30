@@ -58,12 +58,4 @@ unset($options);
 
 require PHPUNIT_COMPOSER_INSTALL;
 
-// clean test data
-require_once 'Pluf.php';
-$tmp_path = 'tests/tmp';
-Pluf_FileUtil::removedir($tmp_path);
-if (!mkdir($tmp_path, 0777, true)) {
-    die('Failed to create temp folder...');
-}
-
 PHPUnit\TextUI\Command::main();
