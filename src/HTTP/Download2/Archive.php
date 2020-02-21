@@ -45,7 +45,10 @@
  * Requires Download2
  */
 use Pluf\HTTP\Download2;
-use Pluf\HTTP\Download2\Exception;
+use System;
+use PER;
+use Archive_Tar;
+use Archive_Zip;
 
 /**
  * Requires System
