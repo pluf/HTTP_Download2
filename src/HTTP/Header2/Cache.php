@@ -69,7 +69,7 @@ namespace Pluf\HTTP\Header2;
  * @version $Revision$
  * @link http://pear.php.net/package/Header2
  */
-class Header2_Cache extends \Pluf\HTTP\Header2
+class Cache extends \Pluf\HTTP\Header2
 {
 
     /**

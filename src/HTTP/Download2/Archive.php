@@ -44,16 +44,16 @@
 /**
  * Requires Download2
  */
+require_once 'System.php';
 use Pluf\HTTP\Download2;
 use System;
-use PER;
+use PEAR;
 use Archive_Tar;
 use Archive_Zip;
 
 /**
  * Requires System
  */
-require_once 'System.php';
 
 /**
  * Archive

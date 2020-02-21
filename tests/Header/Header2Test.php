@@ -4,9 +4,11 @@
  *
  * $Id$
  */
-use PHPUnit\Framework\TestCase;
+namespace Pluf\HTTPTest;
 
-require_once 'HTTP/Header2.php';
+use PHPUnit\Framework\TestCase;
+use Pluf\HTTP\Header2;
+
 // require_once 'HTTP/Request2.php';
 // require_once 'Net/URL2.php';
 

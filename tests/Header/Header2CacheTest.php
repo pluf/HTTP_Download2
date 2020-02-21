@@ -1,14 +1,20 @@
 <?php
+
 /**
  * Test Case for Header2_Cache
  *
  * Id$
  */
+
+namespace Pluf\HTTPTest;
+
+use Pluf;
 use PHPUnit\Framework\TestCase;
-require_once 'HTTP/Header2/Cache.php';
+use Pluf\HTTP\Header2\Cache;
+
 // require_once 'HTTP/Request2.php';
 
-class Header2_CacheTest extends TestCase
+class CacheTest extends TestCase
 {
 
     function testgetCacheStart ()

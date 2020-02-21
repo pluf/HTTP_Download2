@@ -47,6 +47,7 @@ namespace Pluf\HTTP;
  * Requires HTTP
  */
 use HTTP2;
+use InvalidArgumentException;
 
 /**
  * Header2
