@@ -8,6 +8,7 @@ namespace Pluf\HTTPTest;
 
 use PHPUnit\Framework\TestCase;
 use Pluf\HTTP\Header2;
+use StdClass;
 
 // require_once 'HTTP/Request2.php';
 // require_once 'Net/URL2.php';

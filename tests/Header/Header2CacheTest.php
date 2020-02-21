@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Test Case for Header2_Cache
+ * Test Case for Cache
  *
  * Id$
  */
@@ -19,7 +19,7 @@ class CacheTest extends TestCase
 
     function testgetCacheStart ()
     {
-        $c = new Header2_Cache();
+        $c = new Cache();
         $this->assertEquals(time(), $c->getCacheStart());
         $_SERVER['HTTP_IF_MODIFIED_SINCE'] = $c->date(strtotime('yesterday'));
         $this->assertEquals($_SERVER['HTTP_IF_MODIFIED_SINCE'], 
@@ -29,7 +29,7 @@ class CacheTest extends TestCase
 
     function testisOlderThan ()
     {
-        $c = new Header2_Cache();
+        $c = new Cache();
         $this->assertTrue($c->isOlderThan(1, 'second'));
         $this->assertTrue($c->isOlderThan(1, 'hour'));
         $_SERVER['HTTP_IF_MODIFIED_SINCE'] = $c->date(time() - 3);
@@ -39,7 +39,7 @@ class CacheTest extends TestCase
 
     function testisCached ()
     {
-        $c = new Header2_Cache();
+        $c = new Cache();
         $this->assertFalse($c->isCached(), 'no last modified');
         $_SERVER['HTTP_IF_MODIFIED_SINCE'] = $c->date(strtotime('yesterday'));
         $this->assertTrue($c->isCached(), 'last modified header');

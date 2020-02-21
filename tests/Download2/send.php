@@ -1,7 +1,7 @@
 <?php
 
-require_once 'PEAR.php';
-require_once 'HTTP/Download2.php';
+use PEAR;
+use Pluf\HTTP\Download2;
 
 PEAR::setErrorHandling(PEAR_ERROR_PRINT);
 

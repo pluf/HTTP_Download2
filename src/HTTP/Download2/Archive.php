@@ -49,7 +49,7 @@ use Pluf\HTTP\Download2;
 use System;
 use PEAR;
 use Archive_Tar;
-use Archive_Zip;
+// use Archive_Zip;
 
 /**
  * Requires System

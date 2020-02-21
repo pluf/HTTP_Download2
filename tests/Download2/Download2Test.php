@@ -4,6 +4,7 @@ namespace Pluf\HTTPTest;
 
 use PHPUnit\Framework\TestCase;
 use Pluf\HTTP\Download2;
+use Pluf\HTTP\Download2\Exception;
 use Pluf\HTTP\Header2;
 
 // require_once 'HTTP/Request.php';
@@ -17,8 +18,8 @@ class Download2Test extends TestCase
 
     function testDownload2()
     {
-        $this->assertTrue(is_a($h = new Download2(), 'Download2'));
-        $this->assertTrue(is_a($h->HTTP, 'HTTP_Header'));
+        $this->assertTrue(is_a($h = new Download2(), '\Pluf\HTTP\Download2'));
+        $this->assertTrue(is_a($h->HTTP, '\Pluf\HTTP\Header2'));
         unset($h);
     }
 
@@ -31,7 +32,7 @@ class Download2Test extends TestCase
             $h->setFile('nonexistant', false); // '$h->setFile("nonexistant")'
 
             $this->fail("Expected a Download2_Exception");
-        } catch (Download2_Exception $e) {}
+        } catch (Exception $e) {}
     }
 
     function testsetData()
@@ -55,7 +56,7 @@ class Download2Test extends TestCase
             $h->setResource($f); // , '$h->setResource($f = -1)');
 
             $this->fail("Expected a Download2_Exception");
-        } catch (Download2_Exception $e) {}
+        } catch (Exception $e) {}
     }
 
     function testsetGzip()
@@ -91,7 +92,7 @@ class Download2Test extends TestCase
                                                          // characters")');
 
             $this->fail("Expected a Download2_Exception");
-        } catch (Download2_Exception $e) {}
+        } catch (Exception $e) {}
 
         $this->assertEquals('text/html;charset=iso-8859-1', $h->headers['Content-Type'], '$h->headers["Content-Type"] == "text/html;charset=iso-8859-1"');
         unset($h);
@@ -105,7 +106,7 @@ class Download2Test extends TestCase
 
         try {
             $h->guessContentType();
-        } catch (Download2_Exception $e) {
+        } catch (Exception $e) {
             if ($e->getCode() == HTTP_DOWNLOAD2_E_NO_EXT_MMAGIC) {
                 $this->markTestSkipped($e->getMessage());
             }

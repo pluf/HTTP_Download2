@@ -449,7 +449,7 @@ class Header2 extends HTTP2
      */
     public function getStatusType($http_code)
     {
-        if (is_int($http_code) && defined('Header2::STATUS_' .$http_code)
+        if (is_int($http_code) && defined('\Pluf\HTTP\Header2::STATUS_' .$http_code)
             || defined($http_code)
         ) {
             $type = substr($http_code, 0, 1);
@@ -480,8 +480,8 @@ class Header2 extends HTTP2
     public function getStatusText($http_code)
     {
         if ($this->getStatusType($http_code)) {
-            if (is_int($http_code) && defined('Header2::STATUS_' .$http_code)) {
-                return substr(constant('Header2::STATUS_' .$http_code), 4);
+            if (is_int($http_code) && defined('\Pluf\HTTP\Header2::STATUS_' .$http_code)) {
+                return substr(constant('\Pluf\HTTP\Header2::STATUS_' .$http_code), 4);
             } else {
                 return substr($http_code, 4);
             }

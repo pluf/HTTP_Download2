@@ -47,7 +47,6 @@ namespace Pluf\HTTP;
  */
 use PEAR;
 use PEAR_Error;
-use MIME_Type;
 use Pluf\HTTP\Download2\Exception;
 use Pluf\HTTP\Download2\Archive;
 // }}}
