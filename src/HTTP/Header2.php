@@ -25,40 +25,42 @@
  * 
  */
 
+namespace Pluf\HTTP;
+
 /**
  * HTTP::Header
  *
  * PHP versions 5
  *
  * @category  HTTP
- * @package   HTTP_Header2
+ * @package   Header2
  * @author    Wolfram Kriesing <wk@visionp.de>
  * @author    Davey Shafik <davey@php.net>
  * @author    Michael Wallner <mike@php.net>
  * @copyright 2003-2005 The Authors
  * @license   BSD, revised
  * @version   CVS: $Id$
- * @link      http://pear.php.net/package/HTTP_Header2
+ * @link      http://pear.php.net/package/Header2
  */
 
 /**
  * Requires HTTP
  */
-require_once 'HTTP2.php';
+use HTTP2;
 
 /**
- * HTTP_Header2
+ * Header2
  *
  * @category HTTP
- * @package  HTTP_Header2
+ * @package  Header2
  * @author   Wolfram Kriesing <wk@visionp.de>
  * @author   Davey Shafik <davey@php.net>
  * @author   Michael Wallner <mike@php.net>
  * @license  BSD, revised
  * @version  $Revision$
- * @link     http://pear.php.net/package/HTTP_Header2
+ * @link     http://pear.php.net/package/Header2
  */
-class HTTP_Header2 extends HTTP2
+class Header2 extends HTTP2
 {
 
     /**#@+
@@ -171,7 +173,7 @@ class HTTP_Header2 extends HTTP2
      *
      * Sets HTTP version.
      *
-     * @return  object  HTTP_Header2
+     * @return  object  Header2
      */
     public function __construct()
     {
@@ -308,7 +310,7 @@ class HTTP_Header2 extends HTTP2
      *
      * Send out the given HTTP-Status code. Use this for example when you
      * want to tell the client this page is cached, then you would call
-     * sendStatusCode(304). {@see HTTP_Header2_Cache::exitIfCached()}
+     * sendStatusCode(304). {@see Header2_Cache::exitIfCached()}
      *
      * @param int $code The status code to send, i.e. 404, 304, 200, etc.
      * 
@@ -321,8 +323,8 @@ class HTTP_Header2 extends HTTP2
             return false;
         }
 
-        if ($code == (int) $code && defined('HTTP_Header2::STATUS_'. $code)) {
-            $code = constant('HTTP_Header2::STATUS_'. $code);
+        if ($code == (int) $code && defined('Header2::STATUS_'. $code)) {
+            $code = constant('Header2::STATUS_'. $code);
         }
 
         if (strncasecmp(PHP_SAPI, 'cgi', 3)) {
@@ -384,7 +386,7 @@ class HTTP_Header2 extends HTTP2
      * parameters to the url.
      *
      * If you dont need parameters to be added, simply use HTTP2::redirect()
-     * otherwise use HTTP_Header2::redirect().
+     * otherwise use Header2::redirect().
      * 
      * @param string $url     The URL to redirect to, if none is given it
      *                        redirects to the current page.
@@ -446,16 +448,16 @@ class HTTP_Header2 extends HTTP2
      */
     public function getStatusType($http_code)
     {
-        if (is_int($http_code) && defined('HTTP_Header2::STATUS_' .$http_code)
+        if (is_int($http_code) && defined('Header2::STATUS_' .$http_code)
             || defined($http_code)
         ) {
             $type = substr($http_code, 0, 1);
             switch ($type) {
-            case HTTP_Header2::STATUS_INFORMATIONAL:
-            case HTTP_Header2::STATUS_SUCCESSFUL:
-            case HTTP_Header2::STATUS_REDIRECT:
-            case HTTP_Header2::STATUS_CLIENT_ERROR:
-            case HTTP_Header2::STATUS_SERVER_ERROR:
+            case Header2::STATUS_INFORMATIONAL:
+            case Header2::STATUS_SUCCESSFUL:
+            case Header2::STATUS_REDIRECT:
+            case Header2::STATUS_CLIENT_ERROR:
+            case Header2::STATUS_SERVER_ERROR:
                 return $type;
                 break;
             default:
@@ -477,8 +479,8 @@ class HTTP_Header2 extends HTTP2
     public function getStatusText($http_code)
     {
         if ($this->getStatusType($http_code)) {
-            if (is_int($http_code) && defined('HTTP_Header2::STATUS_' .$http_code)) {
-                return substr(constant('HTTP_Header2::STATUS_' .$http_code), 4);
+            if (is_int($http_code) && defined('Header2::STATUS_' .$http_code)) {
+                return substr(constant('Header2::STATUS_' .$http_code), 4);
             } else {
                 return substr($http_code, 4);
             }
@@ -497,7 +499,7 @@ class HTTP_Header2 extends HTTP2
     public function isInformational($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-            return $status_type{0} == HTTP_Header2::STATUS_INFORMATIONAL;
+            return $status_type{0} == Header2::STATUS_INFORMATIONAL;
         } else {
             return false;
         }
@@ -513,7 +515,7 @@ class HTTP_Header2 extends HTTP2
     public function isSuccessful($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-            return $status_type{0} == HTTP_Header2::STATUS_SUCCESSFUL;
+            return $status_type{0} == Header2::STATUS_SUCCESSFUL;
         } else {
             return false;
         }
@@ -529,7 +531,7 @@ class HTTP_Header2 extends HTTP2
     public function isRedirect($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-            return $status_type{0} == HTTP_Header2::STATUS_REDIRECT;
+            return $status_type{0} == Header2::STATUS_REDIRECT;
         } else {
             return false;
         }
@@ -545,7 +547,7 @@ class HTTP_Header2 extends HTTP2
     public function isClientError($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-            return $status_type{0} == HTTP_Header2::STATUS_CLIENT_ERROR;
+            return $status_type{0} == Header2::STATUS_CLIENT_ERROR;
         } else {
             return false;
         }
@@ -561,7 +563,7 @@ class HTTP_Header2 extends HTTP2
     public function isServerError($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-            return $status_type{0} == HTTP_Header2::STATUS_SERVER_ERROR;
+            return $status_type{0} == Header2::STATUS_SERVER_ERROR;
         } else {
             return false;
         }
@@ -577,8 +579,8 @@ class HTTP_Header2 extends HTTP2
     public function isError($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-            return (   ($status_type == HTTP_Header2::STATUS_CLIENT_ERROR)
-                    || ($status_type == HTTP_Header2::STATUS_SERVER_ERROR)
+            return (   ($status_type == Header2::STATUS_CLIENT_ERROR)
+                    || ($status_type == Header2::STATUS_SERVER_ERROR)
                    );
         } else {
             return false;

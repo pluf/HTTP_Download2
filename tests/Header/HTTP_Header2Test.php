@@ -1,6 +1,6 @@
 <?php
 /**
- * TestCase for HTTP_Header2
+ * TestCase for Header2
  *
  * $Id$
  */
@@ -10,12 +10,12 @@ require_once 'HTTP/Header2.php';
 // require_once 'HTTP/Request2.php';
 // require_once 'Net/URL2.php';
 
-class HTTP_Header2Test extends TestCase
+class Header2Test extends TestCase
 {
 
-    function testHTTP_Header2 ()
+    function testHeader2 ()
     {
-        $h = new HTTP_Header2();
+        $h = new Header2();
         $this->assertTrue(
                 $h->getHttpVersion() == 1.1 || $h->getHttpVersion() == 1.0);
         unset($h);
@@ -23,7 +23,7 @@ class HTTP_Header2Test extends TestCase
 
     function testsetHttpVersion ()
     {
-        $h = new HTTP_Header2();
+        $h = new Header2();
         $this->assertFalse($h->setHttpVersion('foo'));
         $this->assertTrue($h->setHttpVersion(1.0));
         $this->assertTrue($h->setHttpVersion(1.1));
@@ -38,7 +38,7 @@ class HTTP_Header2Test extends TestCase
 
     function testgetHttpVersion ()
     {
-        $h = new HTTP_Header2();
+        $h = new Header2();
         $this->assertTrue(
                 $h->getHttpVersion() == 1.0 || $h->getHttpVersion() == 1.1, 
                 ' http version is 1.0 or 1.1');
@@ -53,7 +53,7 @@ class HTTP_Header2Test extends TestCase
 
     function testsetHeader ()
     {
-        $h = new HTTP_Header2();
+        $h = new Header2();
         $this->assertFalse($h->setHeader(null), 'set null');
         $this->assertFalse($h->setHeader(''), ' set empty string');
         $this->assertFalse($h->setHeader(0), 'set 0');
@@ -68,7 +68,7 @@ class HTTP_Header2Test extends TestCase
 
     function testgetHeader ()
     {
-        $h = new HTTP_Header2();
+        $h = new Header2();
         $this->assertEquals('no-cache', $h->getHeader('Pragma'));
         $this->assertEquals('no-cache', $h->getHeader('pRaGmA'));
         $h->setHeader('X-Foo', 'foo');
@@ -111,7 +111,7 @@ class HTTP_Header2Test extends TestCase
 
     function testdateToTimestamp ()
     {
-        $h = new HTTP_Header2();
+        $h = new Header2();
         $this->assertEquals(strtotime($d = $h->date()), $h->dateToTimestamp($d));
         unset($h);
     }
@@ -133,16 +133,16 @@ class HTTP_Header2Test extends TestCase
 
     function testgetStatusType ()
     {
-        $h = new HTTP_Header2();
-        $this->assertEquals(HTTP_Header2::STATUS_INFORMATIONAL, 
+        $h = new Header2();
+        $this->assertEquals(Header2::STATUS_INFORMATIONAL, 
                 $h->getStatusType(101));
-        $this->assertEquals(HTTP_Header2::STATUS_SUCCESSFUL, 
+        $this->assertEquals(Header2::STATUS_SUCCESSFUL, 
                 $h->getStatusType(206));
-        $this->assertEquals(HTTP_Header2::STATUS_REDIRECT, 
+        $this->assertEquals(Header2::STATUS_REDIRECT, 
                 $h->getStatusType(301));
-        $this->assertEquals(HTTP_Header2::STATUS_CLIENT_ERROR, 
+        $this->assertEquals(Header2::STATUS_CLIENT_ERROR, 
                 $h->getStatusType(404));
-        $this->assertEquals(HTTP_Header2::STATUS_SERVER_ERROR, 
+        $this->assertEquals(Header2::STATUS_SERVER_ERROR, 
                 $h->getStatusType(500));
         $this->assertFalse($h->getStatusType(8));
         unset($h);
@@ -150,24 +150,24 @@ class HTTP_Header2Test extends TestCase
 
     function testgetStatusText ()
     {
-        $h = new HTTP_Header2();
-        $this->assertEquals(HTTP_Header2::STATUS_100, 
+        $h = new Header2();
+        $this->assertEquals(Header2::STATUS_100, 
                 '100 ' . $h->getStatusText(100));
-        $this->assertEquals(HTTP_Header2::STATUS_200, 
+        $this->assertEquals(Header2::STATUS_200, 
                 '200 ' . $h->getStatusText(200));
-        $this->assertEquals(HTTP_Header2::STATUS_300, 
+        $this->assertEquals(Header2::STATUS_300, 
                 '300 ' . $h->getStatusText(300));
-        $this->assertEquals(HTTP_Header2::STATUS_302, 
+        $this->assertEquals(Header2::STATUS_302, 
                 '302 ' . $h->getStatusText(302));
-        $this->assertEquals(HTTP_Header2::STATUS_401, 
+        $this->assertEquals(Header2::STATUS_401, 
                 '401 ' . $h->getStatusText(401));
-        $this->assertEquals(HTTP_Header2::STATUS_400, 
+        $this->assertEquals(Header2::STATUS_400, 
                 '400 ' . $h->getStatusText(400));
-        $this->assertEquals(HTTP_Header2::STATUS_500, 
+        $this->assertEquals(Header2::STATUS_500, 
                 '500 ' . $h->getStatusText(500));
-        $this->assertEquals(HTTP_Header2::STATUS_102, 
+        $this->assertEquals(Header2::STATUS_102, 
                 '102 ' . $h->getStatusText(102));
-        $this->assertEquals(HTTP_Header2::STATUS_404, 
+        $this->assertEquals(Header2::STATUS_404, 
                 '404 ' . $h->getStatusText(404));
         $this->assertFalse($h->getStatusText(0));
         $this->assertFalse($h->getStatusText(800));
@@ -176,7 +176,7 @@ class HTTP_Header2Test extends TestCase
 
     function testisInformational ()
     {
-        $h = new HTTP_Header2();
+        $h = new Header2();
         $this->assertTrue($h->isInformational(100));
         $this->assertTrue($h->isInformational(101));
         $this->assertTrue($h->isInformational(102));
@@ -186,7 +186,7 @@ class HTTP_Header2Test extends TestCase
 
     function testisSuccessful ()
     {
-        $h = new HTTP_Header2();
+        $h = new Header2();
         $this->assertTrue($h->isSuccessful(200));
         $this->assertTrue($h->isSuccessful(201));
         $this->assertTrue($h->isSuccessful(202));
@@ -196,7 +196,7 @@ class HTTP_Header2Test extends TestCase
 
     function testisRedirect ()
     {
-        $h = new HTTP_Header2();
+        $h = new Header2();
         $this->assertTrue($h->isRedirect(300));
         $this->assertTrue($h->isRedirect(301));
         $this->assertTrue($h->isRedirect(302));
@@ -206,7 +206,7 @@ class HTTP_Header2Test extends TestCase
 
     function testisClientError ()
     {
-        $h = new HTTP_Header2();
+        $h = new Header2();
         $this->assertTrue($h->isClientError(400));
         $this->assertTrue($h->isClientError(401));
         $this->assertTrue($h->isClientError(404));
@@ -216,7 +216,7 @@ class HTTP_Header2Test extends TestCase
 
     function testisServerError ()
     {
-        $h = new HTTP_Header2();
+        $h = new Header2();
         $this->assertTrue($h->isServerError(500));
         $this->assertTrue($h->isServerError(501));
         $this->assertTrue($h->isServerError(502));
@@ -226,7 +226,7 @@ class HTTP_Header2Test extends TestCase
 
     function testisError ()
     {
-        $h = new HTTP_Header2();
+        $h = new Header2();
         $this->assertTrue($h->isError(500));
         $this->assertTrue($h->isError(501));
         $this->assertTrue($h->isError(502));

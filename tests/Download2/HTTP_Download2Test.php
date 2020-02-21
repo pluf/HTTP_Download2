@@ -5,37 +5,37 @@ require_once 'HTTP/Download2.php';
 require_once 'HTTP/Header2.php';
 
 // require_once 'HTTP/Request.php';
-class HTTP_Download2Test extends PHPUnit_Framework_TestCase
+class Download2Test extends PHPUnit_Framework_TestCase
 {
 
     function setUp ()
     {
-        $this->testScript = 'http://local/www/mike/pear/HTTP_Download2/tests/send.php';
+        $this->testScript = 'http://local/www/mike/pear/Download2/tests/send.php';
     }
 
-    function testHTTP_Download2 ()
+    function testDownload2 ()
     {
-        $this->assertTrue(is_a($h = new HTTP_Download2(), 'HTTP_Download2'));
+        $this->assertTrue(is_a($h = new Download2(), 'Download2'));
         $this->assertTrue(is_a($h->HTTP, 'HTTP_Header'));
         unset($h);
     }
 
     function testsetFile ()
     {
-        $h = new HTTP_Download2();
+        $h = new Download2();
         $h->setFile(dirname(__FILE__) . '/data.txt');
         $this->assertEquals(realpath(dirname(__FILE__) . '/data.txt'), $h->file, 
                 '$h->file == "data.txt');
         try {
             $h->setFile('nonexistant', false); // '$h->setFile("nonexistant")'
             
-            $this->fail("Expected a HTTP_Download2_Exception");
-        } catch (HTTP_Download2_Exception $e) {}
+            $this->fail("Expected a Download2_Exception");
+        } catch (Download2_Exception $e) {}
     }
 
     function testsetData ()
     {
-        $h = new HTTP_Download2();
+        $h = new Download2();
         $this->assertTrue(null === $h->setData('foo'), 
                 'null === $h->setData("foo")');
         $this->assertEquals('foo', $h->data, '$h->data == "foo"');
@@ -44,7 +44,7 @@ class HTTP_Download2Test extends PHPUnit_Framework_TestCase
 
     function testsetResource ()
     {
-        $h = new HTTP_Download2();
+        $h = new Download2();
         $h->setResource($f = fopen(dirname(__FILE__) . '/data.txt', 'r'));
         
         $this->assertEquals($f, $h->handle, '$h->handle == $f');
@@ -54,13 +54,13 @@ class HTTP_Download2Test extends PHPUnit_Framework_TestCase
         try {
             $h->setResource($f); // , '$h->setResource($f = -1)');
             
-            $this->fail("Expected a HTTP_Download2_Exception");
-        } catch (HTTP_Download2_Exception $e) {}
+            $this->fail("Expected a Download2_Exception");
+        } catch (Download2_Exception $e) {}
     }
 
     function testsetGzip ()
     {
-        $h = new HTTP_Download2();
+        $h = new Download2();
         $h->setGzip(false);
         $this->assertFalse($h->gzip, '$h->gzip');
         if (extension_loaded('zlib')) {
@@ -71,8 +71,8 @@ class HTTP_Download2Test extends PHPUnit_Framework_TestCase
             try {
                 $h->setGzip(true); // '$h->setGzip(true) with ext/zlib');
                 
-                $this->fail("Expected a HTTP_Download2_Exception");
-            } catch (HTTP_Download2_Exception $e) {}
+                $this->fail("Expected a Download2_Exception");
+            } catch (Download2_Exception $e) {}
             
             $this->assertFalse($h->gzip, '$h->gzip');
         }
@@ -81,7 +81,7 @@ class HTTP_Download2Test extends PHPUnit_Framework_TestCase
 
     function testsetContentType ()
     {
-        $h = new HTTP_Download2();
+        $h = new Download2();
         $h->setContentType('text/html;charset=iso-8859-1');
         
         try {
@@ -90,8 +90,8 @@ class HTTP_Download2Test extends PHPUnit_Framework_TestCase
                                                          // weird
                                                          // characters")');
             
-            $this->fail("Expected a HTTP_Download2_Exception");
-        } catch (HTTP_Download2_Exception $e) {}
+            $this->fail("Expected a Download2_Exception");
+        } catch (Download2_Exception $e) {}
         
         $this->assertEquals('text/html;charset=iso-8859-1', 
                 $h->headers['Content-Type'], 
@@ -101,13 +101,13 @@ class HTTP_Download2Test extends PHPUnit_Framework_TestCase
 
     function testguessContentType ()
     {
-        $h = new HTTP_Download2(array(
+        $h = new Download2(array(
                 'file' => dirname(__FILE__) . '/data.txt'
         ));
         
         try {
             $h->guessContentType();
-        } catch (HTTP_Download2_Exception $e) {
+        } catch (Download2_Exception $e) {
             if ($e->getCode() == HTTP_DOWNLOAD2_E_NO_EXT_MMAGIC) {
                 $this->markTestSkipped($e->getMessage());
             }

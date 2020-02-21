@@ -25,28 +25,25 @@
  * 
  */
 
+namespace Pluf\HTTP\Header2;
+
 /**
  * HTTP::Header::Cache
  *
  * PHP versions 5
  *
  * @category  HTTP
- * @package   HTTP_Header2
+ * @package   Header2
  * @author    Wolfram Kriesing <wk@visionp.de>
  * @author    Michael Wallner <mike@php.net>
  * @copyright 2003-2005 The Authors
  * @license   BSD, revised
  * @version   CVS: $Id$
- * @link      http://pear.php.net/package/HTTP_Header2
+ * @link      http://pear.php.net/package/Header2
  */
 
 /**
- * Requires HTTP_Header2
- */
-require_once 'HTTP/Header2.php';
-
-/**
- * HTTP_Header2_Cache
+ * Header2_Cache
  *
  * This package provides methods to easier handle caching of HTTP pages.  That
  * means that the pages can be cached at the client (user agent or browser) and
@@ -60,20 +57,20 @@ require_once 'HTTP/Header2.php';
  * Usage:
  * <code>
  *  require_once 'HTTP/Header/Cache.php';
- *  $httpCache = new HTTP_Header2_Cache(4, 'weeks');
+ *  $httpCache = new Header2_Cache(4, 'weeks');
  *  $httpCache->sendHeaders();
  *  // your code goes here
  * </code>
  *
  * @category HTTP
- * @package  HTTP_Header2
+ * @package  Header2
  * @author   Wolfram Kriesing <wk@visionp.de>
  * @author   Michael Wallner <mike@php.net>
  * @license  BSD, revised
  * @version  $Revision$
- * @link     http://pear.php.net/package/HTTP_Header2
+ * @link     http://pear.php.net/package/Header2
  */
-class HTTP_Header2_Cache extends HTTP_Header2
+class Header2_Cache extends \Pluf\HTTP\Header2
 {
     /**
      * Constructor

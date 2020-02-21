@@ -24,6 +24,8 @@
  * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
  * 
  */
+ 
+ namespace Pluf\HTTP\Download2;
 
 /**
  * HTTP::Download2::Archive
@@ -31,19 +33,19 @@
  * PHP version 5
  *
  * @category  HTTP
- * @package   HTTP_Download2
+ * @package   Download2
  * @author    Michael Wallner <mike@php.net>
  * @copyright 2003-2005 Michael Wallner
  * @license   BSD, revised
  * @version   CVS: $Id$
- * @link      http://pear.php.net/package/HTTP_Download2
+ * @link      http://pear.php.net/package/Download2
  */
 
 /**
- * Requires HTTP_Download2
+ * Requires Download2
  */
-require_once 'HTTP/Download2.php';
-require_once 'HTTP/Download2/Exception.php';
+use Pluf\HTTP\Download2;
+use Pluf\HTTP\Download2\Exception;
 
 /**
  * Requires System
@@ -51,18 +53,18 @@ require_once 'HTTP/Download2/Exception.php';
 require_once 'System.php';
 
 /**
- * HTTP_Download2_Archive
+ * Archive
  *
  * Helper class for sending Archives.
  *
  * @category  HTTP
- * @package   HTTP_Download2
+ * @package   Download2
  * @author    Daniel O'Connor <clockwerx@php.net>
  * @copyright 2012 Daniel O'Connor
  * @license   BSD, revised
- * @link      http://pear.php.net/package/HTTP_Download2
+ * @link      http://pear.php.net/package/Download2
  */
-class HTTP_Download2_Archive
+class Archive
 {
     /**
      * Send a bunch of files or directories as an archive
@@ -70,7 +72,7 @@ class HTTP_Download2_Archive
      * Example:
      * <code>
      *  require_once 'HTTP/Download2/Archive.php';
-     *  HTTP_Download2_Archive::send(
+     *  Archive::send(
      *      'myArchive.tgz',
      *      '/var/ftp/pub/mike',
      *      HTTP_DOWNLOAD2_BZ2,
@@ -123,7 +125,7 @@ class HTTP_Download2_Archive
             break;
 
         default:
-            throw new HTTP_Download2_Exception(
+            throw new Exception(
                 'Archive type not supported: ' . $type,
                 HTTP_DOWNLOAD2_E_INVALID_ARCHIVE_TYPE
             );
@@ -133,11 +135,11 @@ class HTTP_Download2_Archive
             $options = array(   'add_path' => $add_path,
                                 'remove_path' => $strip_path);
             if (!$arc->create($files, $options)) {
-                throw new HTTP_Download2_Exception('Archive creation failed.');
+                throw new Exception('Archive creation failed.');
             }
         } else {
             if (!$e = $arc->createModify($files, $add_path, $strip_path)) {
-                throw new HTTP_Download2_Exception('Archive creation failed.');
+                throw new Exception('Archive creation failed.');
             }
             if (PEAR::isError($e)) {
                 return $e;
@@ -145,7 +147,7 @@ class HTTP_Download2_Archive
         }
         unset($arc);
 
-        $dl = new HTTP_Download2(array('file' => $tmp));
+        $dl = new Download2(array('file' => $tmp));
         $dl->setContentType('application/' . $content_type);
         $dl->setContentDisposition(HTTP_DOWNLOAD2_ATTACHMENT, $name);
         return $dl->send();
