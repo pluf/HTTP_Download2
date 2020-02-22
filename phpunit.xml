@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<phpunit colors="true">
+<phpunit 
+	bootstrap="./vendor/autoload.php"
+	stopOnWarning="false"
+	verbose="false"
+	backupGlobals="false"
+	backupStaticAttributes="false"
+	colors="true">
     <testsuites>
         <testsuite name="Pluf">
             <directory>./tests/Downlload2/</directory>
