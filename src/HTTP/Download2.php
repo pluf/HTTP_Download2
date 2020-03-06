@@ -25,7 +25,6 @@
  * 
  */
 
-
 namespace Pluf\HTTP;
 /**
  * HTTP::Download2

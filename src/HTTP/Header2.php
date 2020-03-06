@@ -500,11 +500,7 @@ class Header2 extends \Pluf\HTTP2
     public function isInformational($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-<<<<<<< HEAD
             return $status_type[0] == self::STATUS_INFORMATIONAL;
-=======
-            return $status_type[0] == HTTP_Header2::STATUS_INFORMATIONAL;
->>>>>>> branch 'develop' of https://github.com/pluf/http2.git
         } else {
             return false;
         }
@@ -520,11 +516,7 @@ class Header2 extends \Pluf\HTTP2
     public function isSuccessful($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-<<<<<<< HEAD
             return $status_type[0] == self::STATUS_SUCCESSFUL;
-=======
-            return $status_type[0] == HTTP_Header2::STATUS_SUCCESSFUL;
->>>>>>> branch 'develop' of https://github.com/pluf/http2.git
         } else {
             return false;
         }
@@ -540,11 +532,7 @@ class Header2 extends \Pluf\HTTP2
     public function isRedirect($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-<<<<<<< HEAD
             return $status_type[0] == self::STATUS_REDIRECT;
-=======
-            return $status_type[0] == HTTP_Header2::STATUS_REDIRECT;
->>>>>>> branch 'develop' of https://github.com/pluf/http2.git
         } else {
             return false;
         }
@@ -560,11 +548,7 @@ class Header2 extends \Pluf\HTTP2
     public function isClientError($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-<<<<<<< HEAD
             return $status_type[0] == self::STATUS_CLIENT_ERROR;
-=======
-            return $status_type[0] == HTTP_Header2::STATUS_CLIENT_ERROR;
->>>>>>> branch 'develop' of https://github.com/pluf/http2.git
         } else {
             return false;
         }
@@ -580,11 +564,7 @@ class Header2 extends \Pluf\HTTP2
     public function isServerError($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-<<<<<<< HEAD
             return $status_type[0] == self::STATUS_SERVER_ERROR;
-=======
-            return $status_type[0] == HTTP_Header2::STATUS_SERVER_ERROR;
->>>>>>> branch 'develop' of https://github.com/pluf/http2.git
         } else {
             return false;
         }
