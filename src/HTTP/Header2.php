@@ -500,7 +500,11 @@ class Header2 extends HTTP2
     public function isInformational($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
+<<<<<<< HEAD
             return $status_type{0} == Header2::STATUS_INFORMATIONAL;
+=======
+            return $status_type[0] == HTTP_Header2::STATUS_INFORMATIONAL;
+>>>>>>> refs/remotes/origin/develop
         } else {
             return false;
         }
@@ -516,7 +520,11 @@ class Header2 extends HTTP2
     public function isSuccessful($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
+<<<<<<< HEAD
             return $status_type{0} == Header2::STATUS_SUCCESSFUL;
+=======
+            return $status_type[0] == HTTP_Header2::STATUS_SUCCESSFUL;
+>>>>>>> refs/remotes/origin/develop
         } else {
             return false;
         }
@@ -532,7 +540,11 @@ class Header2 extends HTTP2
     public function isRedirect($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
+<<<<<<< HEAD
             return $status_type{0} == Header2::STATUS_REDIRECT;
+=======
+            return $status_type[0] == HTTP_Header2::STATUS_REDIRECT;
+>>>>>>> refs/remotes/origin/develop
         } else {
             return false;
         }
@@ -548,7 +560,11 @@ class Header2 extends HTTP2
     public function isClientError($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
+<<<<<<< HEAD
             return $status_type{0} == Header2::STATUS_CLIENT_ERROR;
+=======
+            return $status_type[0] == HTTP_Header2::STATUS_CLIENT_ERROR;
+>>>>>>> refs/remotes/origin/develop
         } else {
             return false;
         }
@@ -564,7 +580,11 @@ class Header2 extends HTTP2
     public function isServerError($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
+<<<<<<< HEAD
             return $status_type{0} == Header2::STATUS_SERVER_ERROR;
+=======
+            return $status_type[0] == HTTP_Header2::STATUS_SERVER_ERROR;
+>>>>>>> refs/remotes/origin/develop
         } else {
             return false;
         }
