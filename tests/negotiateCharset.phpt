@@ -1,6 +1,5 @@
 --TEST--
 negotiateCharset() with default
---GET--
 --ENV--
 HTTP_HOST=example.org
 SERVER_NAME=example.org
@@ -23,7 +22,7 @@ HTTP_ACCEPT_CHARSET=ISO-8859-1, Big5;q=0.6,utf-8;q=0.7, *;q=0.5
  * @license  http://www.opensource.org/licenses/bsd-license.php New BSD License
  * @link     http://pear.php.net/package/HTTP2
  */
-require_once  'HTTP2.php';
+use \Pluf\HTTP2;
 
 // The --ENV-- Accept sets the following order
 // (preferred charsets first)

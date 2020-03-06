@@ -2,11 +2,7 @@
 parseLinks(): real world examples
 --FILE--
 <?php
-<<<<<<< HEAD
 use \Pluf\HTTP2;
-=======
-require_once  'HTTP2.php';
->>>>>>> branch 'develop' of https://github.com/pluf/http2.git
 $http = new HTTP2();
 $links = array(
     '<http://waterpigs.co.uk/mentions/webmention/>; rel="http://webmention.org/"',

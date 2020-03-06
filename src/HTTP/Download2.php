@@ -639,6 +639,10 @@ class Download2
      */
     function guessContentType()
     {
+        if (!PEAR::isError($mime_type = MIME_Type::autoDetect($this->file))) {
+            return $this->setContentType($mime_type);
+        }
+        
         if (!function_exists('mime_content_type')) {
             throw new Exception(
                 'This feature requires ext/mime_magic!',
@@ -652,9 +656,6 @@ class Download2
             );
         }
         
-        if (!PEAR::isError($mime_type = MIME_Type::autoDetect($this->file))) {
-            return $this->setContentType($mime_type);
-        }
         if (!$content_type = @mime_content_type($this->file)) {
             throw new Exception(
                 'Couldn\'t guess content type with mime_content_type().',

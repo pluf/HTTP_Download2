@@ -1,6 +1,5 @@
 --TEST--
 absoluteURI() URL: http://example.org/subdir/test.php/?abc=123
---GET--
 --ENV--
 HTTP_HOST=example.org
 SERVER_NAME=example.org

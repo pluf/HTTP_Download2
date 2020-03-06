@@ -13,11 +13,7 @@ parseLinks(): RFC 5988 example 2
  * @license  http://www.opensource.org/licenses/bsd-license.php New BSD License
  * @link     http://pear.php.net/package/HTTP2
  */
-<<<<<<< HEAD
 use \Pluf\HTTP2;
-=======
-require_once  'HTTP2.php';
->>>>>>> branch 'develop' of https://github.com/pluf/http2.git
 $http = new HTTP2();
 $out = var_export($http->parseLinks('</>; rel="http://example.net/foo"'), true);
 echo preg_replace('#\s+\n#', "\n", $out);

@@ -2,11 +2,7 @@
 parseLinks(): relation without quotes
 --FILE--
 <?php
-<<<<<<< HEAD
 use \Pluf\HTTP2;
-=======
-require_once  'HTTP2.php';
->>>>>>> branch 'develop' of https://github.com/pluf/http2.git
 $http = new HTTP2();
 $links = array(
     '<http://wp.me/PEmnE-1hd>; rel=shortlink'

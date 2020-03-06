@@ -1,6 +1,5 @@
 --TEST--
 absoluteURI() URL: https://example.org:8443/subdir/test.php?abc=123
---GET--
 --ENV--
 HTTP_HOST=example.org
 HTTPS=on

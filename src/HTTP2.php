@@ -21,7 +21,6 @@ namespace Pluf;
 /**
  * Load exception class
  */
-use Pluf\HTTP2\Exception;
 use InvalidArgumentException;
 
 /**
@@ -128,7 +127,8 @@ class HTTP2
         }
 
         if (isset($_SERVER['REMOTE_HOST'])) {
-            $lang = strtolower(end($h = explode('.', $_SERVER['REMOTE_HOST'])));
+            $h = explode('.', $_SERVER['REMOTE_HOST']);
+            $lang = strtolower(end($h));
             if (isset($supp[$lang])) {
                 return $supp[$lang];
             }

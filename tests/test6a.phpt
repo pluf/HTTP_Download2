@@ -1,6 +1,5 @@
 --TEST--
 absoluteURI() URL: http://example.org/subdir/
---GET--
 --ENV--
 HTTP_HOST=example.org
 SERVER_NAME=example.org

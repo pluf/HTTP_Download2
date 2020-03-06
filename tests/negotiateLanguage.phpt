@@ -1,6 +1,5 @@
 --TEST--
 negotiateLanguage()
---GET--
 --ENV--
 HTTP_HOST=example.org
 SERVER_NAME=example.org
@@ -23,7 +22,7 @@ HTTP_ACCEPT_LANGUAGE=es-ES;q=0.7, es; q=0.6 ,fr; q=1.0, en; q=0.5,dk , fr-CH
  * @license  http://www.opensource.org/licenses/bsd-license.php New BSD License
  * @link     http://pear.php.net/package/HTTP2
  */
-require_once 'HTTP2.php';
+use \Pluf\HTTP2;
 
 // The --ENV-- Accept-language gives the following order
 // (preferred language first)
