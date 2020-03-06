@@ -22,14 +22,6 @@
 			"email" : "mahdi.arghiani@dpq.co.ir"
 		}
 	],
-	"autoload" : {
-		"psr-0" : {
-			"HTTP" : "src"
-		}
-	},
-	"include-path" : [
-		"src"
-	],
 	"support" : {
 		"issues" : "https://github.com/pluf/http_download2",
 		"source" : "https://github.com/pluf/http_download2",
@@ -40,12 +32,18 @@
 	"require" : {
 		"pear/pear_exception" : "*",
 		"pear/pear" : "*",
-		"pear/http2" : "*"
+		"pear/http2" : "*",
+		"pear/mime_type" : "*"
 	},
 	"require-dev" : {
-		"phpunit/phpunit" : "^8.3"
+		"phpunit/phpunit" : "7.x"
 	},
 	"suggest" : {
 		"pear/archive_tar" : "Install optionally via your project's composer.json"
+	},
+	"autoload" : {
+		"psr-4" : {
+			"Pluf\\" : "src"
+		}
 	}
 }

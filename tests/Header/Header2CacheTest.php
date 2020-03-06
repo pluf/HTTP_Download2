@@ -1,19 +1,25 @@
 <?php
+
 /**
- * Test Case for HTTP_Header2_Cache
+ * Test Case for Cache
  *
  * Id$
  */
+
+namespace Pluf\HTTPTest;
+
+use Pluf;
 use PHPUnit\Framework\TestCase;
-require_once 'HTTP/Header2/Cache.php';
+use Pluf\HTTP\Header2\Cache;
+
 // require_once 'HTTP/Request2.php';
 
-class HTTP_Header2_CacheTest extends TestCase
+class CacheTest extends TestCase
 {
 
     function testgetCacheStart ()
     {
-        $c = new HTTP_Header2_Cache();
+        $c = new Cache();
         $this->assertEquals(time(), $c->getCacheStart());
         $_SERVER['HTTP_IF_MODIFIED_SINCE'] = $c->date(strtotime('yesterday'));
         $this->assertEquals($_SERVER['HTTP_IF_MODIFIED_SINCE'], 
@@ -23,7 +29,7 @@ class HTTP_Header2_CacheTest extends TestCase
 
     function testisOlderThan ()
     {
-        $c = new HTTP_Header2_Cache();
+        $c = new Cache();
         $this->assertTrue($c->isOlderThan(1, 'second'));
         $this->assertTrue($c->isOlderThan(1, 'hour'));
         $_SERVER['HTTP_IF_MODIFIED_SINCE'] = $c->date(time() - 3);
@@ -33,7 +39,7 @@ class HTTP_Header2_CacheTest extends TestCase
 
     function testisCached ()
     {
-        $c = new HTTP_Header2_Cache();
+        $c = new Cache();
         $this->assertFalse($c->isCached(), 'no last modified');
         $_SERVER['HTTP_IF_MODIFIED_SINCE'] = $c->date(strtotime('yesterday'));
         $this->assertTrue($c->isCached(), 'last modified header');
