@@ -22,6 +22,12 @@
 			"email" : "mahdi.arghiani@dpq.co.ir"
 		}
 	],
+<<<<<<< HEAD
+=======
+	"include-path" : [
+		"src"
+	],
+>>>>>>> branch 'develop' of https://github.com/pluf/http2.git
 	"support" : {
 		"issues" : "https://github.com/pluf/http_download2",
 		"source" : "https://github.com/pluf/http_download2",
@@ -31,12 +37,21 @@
 	},
 	"require" : {
 		"pear/pear_exception" : "*",
+<<<<<<< HEAD
 		"pear/pear" : "*",
 		"pear/http2" : "*",
 		"pear/mime_type" : "*"
+=======
+		"pear/pear" : "*"
+>>>>>>> branch 'develop' of https://github.com/pluf/http2.git
 	},
 	"require-dev" : {
+<<<<<<< HEAD
 		"phpunit/phpunit" : "7.x"
+=======
+		"phpunit/phpunit" : "^8.3",
+		"pear/pear-core" : "*"
+>>>>>>> branch 'develop' of https://github.com/pluf/http2.git
 	},
 	"suggest" : {
 		"pear/archive_tar" : "Install optionally via your project's composer.json"
