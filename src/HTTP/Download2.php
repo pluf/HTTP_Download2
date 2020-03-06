@@ -639,8 +639,8 @@ class Download2
      */
     function guessContentType()
     {
-        if (class_exists('MIME_Type') || @include_once 'MIME/Type.php') {
-            if (PEAR::isError($mime_type = MIME_Type::autoDetect($this->file))) {
+        if (class_exists('\MIME_Type')) {
+            if (PEAR::isError($mime_type = \MIME_Type::autoDetect($this->file))) {
                 throw new Exception(
                     $mime_type->getMessage(),
                     HTTP_DOWNLOAD2_E_INVALID_CONTENT_TYPE

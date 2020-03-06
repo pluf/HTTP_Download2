@@ -13,7 +13,7 @@ parseLinks(): multiple links separated by comma
  * @license  http://www.opensource.org/licenses/bsd-license.php New BSD License
  * @link     http://pear.php.net/package/HTTP2
  */
-require_once  'HTTP2.php';
+use \Pluf\HTTP2;
 $http = new HTTP2();
 $out = var_export($http->parseLinks('<a>, <b>, , , <c>'), true);
 echo preg_replace('#\s+\n#', "\n", $out);

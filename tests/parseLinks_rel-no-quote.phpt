@@ -2,7 +2,7 @@
 parseLinks(): relation without quotes
 --FILE--
 <?php
-require_once  'HTTP2.php';
+use \Pluf\HTTP2;
 $http = new HTTP2();
 $links = array(
     '<http://wp.me/PEmnE-1hd>; rel=shortlink'

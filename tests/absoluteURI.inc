@@ -11,7 +11,7 @@
  * @author   Philippe Jausions <jausions@php.net>
  * @version  $Id$
  */
-require_once 'HTTP2.php';
+use \Pluf\HTTP2;
 
 // For 4th argument of HTTP2::absoluteURI() method
 if (!defined('HTTP2_RELATIVETOSCRIPT')) {

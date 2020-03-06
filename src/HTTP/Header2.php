@@ -46,8 +46,7 @@ namespace Pluf\HTTP;
 /**
  * Requires HTTP
  */
-use HTTP2;
-use InvalidArgumentException;
+use \InvalidArgumentException;
 
 /**
  * Header2
@@ -61,7 +60,7 @@ use InvalidArgumentException;
  * @version  $Revision$
  * @link     http://pear.php.net/package/Header2
  */
-class Header2 extends HTTP2
+class Header2 extends \Pluf\HTTP2
 {
 
     /**#@+
@@ -370,6 +369,7 @@ class Header2 extends HTTP2
         }
 
         $regex = '~[^,]*,\s(\d+)\s(\w+)\s(\d+)\s(\d+):(\d+):(\d+).*~';
+        $m = array();
         if (!preg_match($regex, $date, $m)) {
             return false;
         }
@@ -398,7 +398,7 @@ class Header2 extends HTTP2
      *                        $GLOBALS[$value]
      * @param bool   $session Whether the session name/id should be added
      * 
-     * @see     HTTP2::redirect()
+     * @see     \Pluf\HTTP2::redirect()
      * @author  Wolfram Kriesing <wk@visionp.de>
      * 
      * @return  void
@@ -454,11 +454,11 @@ class Header2 extends HTTP2
         ) {
             $type = substr($http_code, 0, 1);
             switch ($type) {
-            case Header2::STATUS_INFORMATIONAL:
-            case Header2::STATUS_SUCCESSFUL:
-            case Header2::STATUS_REDIRECT:
-            case Header2::STATUS_CLIENT_ERROR:
-            case Header2::STATUS_SERVER_ERROR:
+            case self::STATUS_INFORMATIONAL:
+            case self::STATUS_SUCCESSFUL:
+            case self::STATUS_REDIRECT:
+            case self::STATUS_CLIENT_ERROR:
+            case self::STATUS_SERVER_ERROR:
                 return $type;
                 break;
             default:
@@ -500,11 +500,7 @@ class Header2 extends HTTP2
     public function isInformational($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-<<<<<<< HEAD
-            return $status_type{0} == Header2::STATUS_INFORMATIONAL;
-=======
-            return $status_type[0] == HTTP_Header2::STATUS_INFORMATIONAL;
->>>>>>> refs/remotes/origin/develop
+            return $status_type[0] == self::STATUS_INFORMATIONAL;
         } else {
             return false;
         }
@@ -520,11 +516,7 @@ class Header2 extends HTTP2
     public function isSuccessful($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-<<<<<<< HEAD
-            return $status_type{0} == Header2::STATUS_SUCCESSFUL;
-=======
-            return $status_type[0] == HTTP_Header2::STATUS_SUCCESSFUL;
->>>>>>> refs/remotes/origin/develop
+            return $status_type[0] == self::STATUS_SUCCESSFUL;
         } else {
             return false;
         }
@@ -540,11 +532,7 @@ class Header2 extends HTTP2
     public function isRedirect($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-<<<<<<< HEAD
-            return $status_type{0} == Header2::STATUS_REDIRECT;
-=======
-            return $status_type[0] == HTTP_Header2::STATUS_REDIRECT;
->>>>>>> refs/remotes/origin/develop
+            return $status_type[0] == self::STATUS_REDIRECT;
         } else {
             return false;
         }
@@ -560,11 +548,7 @@ class Header2 extends HTTP2
     public function isClientError($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-<<<<<<< HEAD
-            return $status_type{0} == Header2::STATUS_CLIENT_ERROR;
-=======
-            return $status_type[0] == HTTP_Header2::STATUS_CLIENT_ERROR;
->>>>>>> refs/remotes/origin/develop
+            return $status_type[0] == self::STATUS_CLIENT_ERROR;
         } else {
             return false;
         }
@@ -580,11 +564,7 @@ class Header2 extends HTTP2
     public function isServerError($http_code)
     {
         if ($status_type = $this->getStatusType($http_code)) {
-<<<<<<< HEAD
-            return $status_type{0} == Header2::STATUS_SERVER_ERROR;
-=======
-            return $status_type[0] == HTTP_Header2::STATUS_SERVER_ERROR;
->>>>>>> refs/remotes/origin/develop
+            return $status_type[0] == self::STATUS_SERVER_ERROR;
         } else {
             return false;
         }

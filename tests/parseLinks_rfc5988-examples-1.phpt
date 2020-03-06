@@ -13,7 +13,7 @@ parseLinks(): RFC 5988 example 1
  * @license  http://www.opensource.org/licenses/bsd-license.php New BSD License
  * @link     http://pear.php.net/package/HTTP2
  */
-require_once  'HTTP2.php';
+use \Pluf\HTTP2;
 $http = new HTTP2();
 $links = array(
     '<http://example.com/TheBook/chapter2>; rel="previous"; title="previous chapter"',

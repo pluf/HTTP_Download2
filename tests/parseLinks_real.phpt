@@ -2,7 +2,7 @@
 parseLinks(): real world examples
 --FILE--
 <?php
-require_once  'HTTP2.php';
+use \Pluf\HTTP2;
 $http = new HTTP2();
 $links = array(
     '<http://waterpigs.co.uk/mentions/webmention/>; rel="http://webmention.org/"',
