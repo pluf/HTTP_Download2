@@ -8,21 +8,29 @@ git:
 install:
   # Install composer packages, will also trigger dump-autoload
   - travis_retry composer install --no-interaction
-  # - travis_retry composer require codeclimate/php-test-reporter --no-interaction
-  # Install coveralls.phar
-  - wget -c -nc --retry-connrefused --tries=0 https://github.com/satooshi/php-coveralls/releases/download/v1.0.1/coveralls.phar
-  - chmod +x coveralls.phar
-  - php coveralls.phar --version
   
 script:
   - ./vendor/bin/phpunit 
 
 after_success:
-# Submit coverage report to Coveralls servers, see .coveralls.yml
- - travis_retry php coveralls.phar -v
-# Submit coverage report to codecov.io
-# - vendor/bin/test-reporter
-# - bash <(curl -s https://codecov.io/bash)
+  #
+  # Codecove
+  #
+  # Submit coverage report to codecov.io
+  - bash <(curl -s https://codecov.io/bash)
+  
+  #
+  # Coveralls
+  #
+  # Submit coverage report to Coveralls servers, see .coveralls.yml
+  - travis_retry composer require --dev php-coveralls/php-coveralls --no-interaction
+  - travis_retry php vendor/bin/php-coveralls -v
+  
+  #
+  # Code Cliemet 
+  #
+  - travis_retry composer require codeclimate/php-test-reporter --no-interaction
+  - vendor/bin/test-reporter
 
 notifications:
   email:
