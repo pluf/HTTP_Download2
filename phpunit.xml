@@ -7,14 +7,9 @@
 	backupStaticAttributes="false"
 	colors="true">
     <testsuites>
-        <testsuite name="Pluf">
-            <directory>./tests/Downlload2/</directory>
-            <directory>./tests/Header/</directory>
+        <testsuite name="HTTP2">
+            <directory>./tests/</directory>
         </testsuite>
-        <testsuite>
-			<directory>tests</directory>
-			<file>*Test.php</file>
-		</testsuite>
     </testsuites>
 
 	<!-- Code coverage -->
