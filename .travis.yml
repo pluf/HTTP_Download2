@@ -25,12 +25,14 @@ after_success:
   # Submit coverage report to Coveralls servers, see .coveralls.yml
   - travis_retry composer require --dev php-coveralls/php-coveralls --no-interaction
   - travis_retry php vendor/bin/php-coveralls -v
+  - travis_retry composer remove  --dev php-coveralls/php-coveralls --no-interaction
   
   #
   # Code Cliemet 
   #
-  - travis_retry composer require codeclimate/php-test-reporter --no-interaction
-  - vendor/bin/test-reporter
+  - travis_retry composer require --dev codeclimate/php-test-reporter --no-interaction
+  - travis_retry vendor/bin/test-reporter
+  - travis_retry composer remove --dev codeclimate/php-test-reporter --no-interaction
 
 notifications:
   email:
