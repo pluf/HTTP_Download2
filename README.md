@@ -1,6 +1,6 @@
 # HTTP2 
 
-[![Build Status](https://travis-ci.org/pluf/http2.svg?branch=master)](https://travis-ci.org/pluf/http2)
+[![Build Status](https://travis-ci.com/pluf/http2.svg?branch=master)](https://travis-ci.com/pluf/http2)
 [![codecov](https://codecov.io/gh/pluf/http2/branch/master/graph/badge.svg)](https://codecov.io/gh/pluf/http2)
 [![Maintainability](https://api.codeclimate.com/v1/badges/513f356bdf26065cc009/maintainability)](https://codeclimate.com/github/pluf/http2/maintainability)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/513f356bdf26065cc009/test_coverage)](https://codeclimate.com/github/pluf/http2/test_coverage)
