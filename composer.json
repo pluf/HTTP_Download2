@@ -1,6 +1,6 @@
 {
 	"name" : "pluf/http2",
-	"version" : "6.0.8",
+	"version" : "6.0.9",
 	"license" : "MIT",
 	"description" : "Pluf HTTP package",
 	"type" : "library",
