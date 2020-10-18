@@ -8,7 +8,6 @@
 
 namespace Pluf\HTTPTest;
 
-use Pluf;
 use PHPUnit\Framework\TestCase;
 use Pluf\HTTP\Header2\Cache;
 

@@ -26,7 +26,7 @@ use InvalidArgumentException;
 /**
  * Miscellaneous HTTP Utilities
  *
- * PEAR::HTTP2 provides shorthand methods for generating HTTP dates,
+ * Pluf HTTP2 provides shorthand methods for generating HTTP dates,
  * issueing HTTP HEAD requests, building absolute URIs, firing redirects and
  * negotiating user preferred language.
  *
@@ -47,6 +47,7 @@ class HTTP2
 
     /**
      * Formats a RFC compliant GMT date HTTP header.
+     * 
      * This function honors the
      * "y2k_compliance" php.ini directive and formats the GMT date corresponding
      * to either RFC850 or RFC822.

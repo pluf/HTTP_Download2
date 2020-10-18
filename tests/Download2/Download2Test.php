@@ -5,7 +5,6 @@ namespace Pluf\HTTPTest;
 use PHPUnit\Framework\TestCase;
 use Pluf\HTTP\Download2;
 use Pluf\HTTP\Download2\Exception;
-use Pluf\HTTP\Header2;
 
 // require_once 'HTTP/Request.php';
 class Download2Test extends TestCase
@@ -73,7 +72,7 @@ class Download2Test extends TestCase
                 $h->setGzip(true); // '$h->setGzip(true) with ext/zlib');
 
                 $this->fail("Expected a Download2_Exception");
-            } catch (Download2_Exception $e) {}
+            } catch (Exception $e) {}
 
             $this->assertFalse($h->gzip, '$h->gzip');
         }
