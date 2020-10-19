@@ -1,19 +1,11 @@
 <?php
-use AdrianSuter\Autoload\Override\Override;
-use Pluf\Http\Headers;
-use Pluf\Http\Message;
-use Pluf\Http\NonBufferedBody;
-use Pluf\Http\StreamFactory;
-use Pluf\Http\UploadedFile;
-use Pluf\Tests\Assets\HeaderStack;
-
 $classLoader = require __DIR__ . '/../vendor/autoload.php';
 
 // require __DIR__ . '/Assets/PhpFunctionOverrides.php';
 // require __DIR__ . '/Assets/PhpFactoryFunctionOverrides.php';
 
-Override::apply($classLoader, [
-    Headers::class => [
+\AdrianSuter\Autoload\Override\Override::apply($classLoader, [
+    \Pluf\Http\Headers::class => [
         'getallheaders' => function () {
             if (array_key_exists('getallheaders_return', $GLOBALS)) {
                 return $GLOBALS['getallheaders_return'];
@@ -22,19 +14,19 @@ Override::apply($classLoader, [
             return getallheaders();
         }
     ],
-    Message::class => [
+    \Pluf\Http\Message::class => [
         'header' => function (string $string, bool $replace = true, int $statusCode = null): void {
-            HeaderStack::push([
+            \Pluf\Tests\Assets\HeaderStack::push([
                 'header' => $string,
                 'replace' => $replace,
                 'status_code' => $statusCode
             ]);
         },
         'header_remove' => function ($name = null): void {
-            HeaderStack::remove($name);
+            \Pluf\Tests\Assets\HeaderStack::remove($name);
         }
     ],
-    NonBufferedBody::class => [
+    \Pluf\Http\NonBufferedBody::class => [
         'ob_get_level' => function (): int {
             if (isset($GLOBALS['ob_get_level_shift'])) {
                 return ob_get_level() + $GLOBALS['ob_get_level_shift'];
@@ -43,7 +35,7 @@ Override::apply($classLoader, [
             return ob_get_level();
         }
     ],
-    UploadedFile::class => [
+    \Pluf\Http\UploadedFile::class => [
         'copy' => function (string $source, string $destination, $context = null): bool {
             if (isset($GLOBALS['copy_return'])) {
                 return $GLOBALS['copy_return'];
@@ -72,7 +64,7 @@ Override::apply($classLoader, [
             return rename($oldName, $newName, $context = null);
         }
     ],
-    StreamFactory::class => [
+    \Pluf\Http\StreamFactory::class => [
         'fopen' => function (string $filename, string $mode) {
             if (isset($GLOBALS['fopen_return'])) {
                 return isset($GLOBALS['fopen_return']);

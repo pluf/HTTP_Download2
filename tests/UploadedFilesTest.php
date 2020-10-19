@@ -2,13 +2,15 @@
 namespace Pluf\Tests;
 
 use PHPUnit\Framework\TestCase;
-use PLuf\Http\Request;
 use Pluf\Http\Environment;
 use Pluf\Http\Headers;
+use Pluf\Http\Request;
 use Pluf\Http\RequestBody;
 use Pluf\Http\Stream;
 use Pluf\Http\UploadedFile;
 use Pluf\Http\Uri;
+use InvalidArgumentException;
+use RuntimeException;
 
 class UploadedFilesTest extends TestCase
 {
@@ -73,7 +75,7 @@ class UploadedFilesTest extends TestCase
     {
         $_FILES = $input;
 
-        $uploadedFile = UploadedFile::createFromEnvironment(Environment::mock());
+        $uploadedFile = UploadedFile::createFromGlobals(Environment::mock());
         $this->assertEquals($expected, $uploadedFile);
     }
 
@@ -89,7 +91,7 @@ class UploadedFilesTest extends TestCase
         // If pluf.files provided - it will return what was provided
         $userData['pluf.files'] = $input;
 
-        $uploadedFile = UploadedFile::createFromEnvironment(Environment::mock($userData));
+        $uploadedFile = UploadedFile::createFromGlobals(Environment::mock($userData));
         $this->assertEquals($input, $uploadedFile);
     }
 
@@ -97,7 +99,7 @@ class UploadedFilesTest extends TestCase
     {
         unset($_FILES);
 
-        $uploadedFile = UploadedFile::createFromEnvironment(Environment::mock());
+        $uploadedFile = UploadedFile::createFromGlobals(Environment::mock());
         $this->assertEquals([], $uploadedFile);
     }
 
@@ -144,13 +146,13 @@ class UploadedFilesTest extends TestCase
 
     /**
      *
-     * @expectedException InvalidArgumentException
      * @depends testConstructor
      * @test
      * @param UploadedFile $uploadedFile
      */
     public function testMoveToNotWritable(UploadedFile $uploadedFile)
     {
+        $this->expectException(InvalidArgumentException::class);
         $tempName = uniqid('file-');
         $path = 'some_random_dir' . DIRECTORY_SEPARATOR . $tempName;
         $uploadedFile->moveTo($path);
@@ -179,11 +181,11 @@ class UploadedFilesTest extends TestCase
 
     /**
      *
-     * @expectedException RuntimeException
      * @depends testConstructor
      */
     public function testMoveToReadonly(UploadedFile $uploadedFile)
     {
+        $this->expectException(RuntimeException::class);
         $tempName = uniqid('filer-');
         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $tempName;
 
@@ -205,10 +207,10 @@ class UploadedFilesTest extends TestCase
      *
      * @param UploadedFile $uploadedFile
      *
-     * @expectedException RuntimeException
      */
     public function testMoveToCannotBeDoneTwice(UploadedFile $uploadedFile)
     {
+        $this->expectException(RuntimeException::class);
         $tempName = uniqid('file-');
         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $tempName;
         $uploadedFile->moveTo($path);
@@ -221,13 +223,13 @@ class UploadedFilesTest extends TestCase
     /**
      * This test must run after testMoveTo
      *
-     * @expectedException RuntimeException
      * @test
      * @depends testConstructor
      * @param UploadedFile $uploadedFile
      */
     public function testMoveToAgain(UploadedFile $uploadedFile)
     {
+        $this->expectException(RuntimeException::class);
         $tempName = uniqid('file-');
         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $tempName;
         $uploadedFile->moveTo($path);
@@ -237,26 +239,27 @@ class UploadedFilesTest extends TestCase
      * This test must run after testMoveTo
      *
      * @depends testConstructor
-     * @expectedException RuntimeException
      * @test
      * @param UploadedFile $uploadedFile
      */
     public function testMovedStream($uploadedFile)
     {
+        $this->expectException(RuntimeException::class);
+
         $uploadedFile->getStream();
     }
 
     public function testMoveToStream()
     {
         $uploadedFile = $this->generateNewTmpFile();
-        $contents = file_get_contents($uploadedFile->file);
+        $contents = file_get_contents($uploadedFile->getFilePath());
 
         ob_start();
         $uploadedFile->moveTo('php://output');
         $movedFileContents = ob_get_clean();
 
         $this->assertEquals($contents, $movedFileContents);
-        $this->assertFileNotExists($uploadedFile->file);
+        $this->assertFileNotExists($uploadedFile->getFilePath());
     }
 
     public function providerCreateFromEnvironment()

@@ -1,5 +1,5 @@
 <?php
-namespace Pluf\Http;
+namespace Pluf;
 
 use Pluf\Tests\Assets\HeaderStack;
 

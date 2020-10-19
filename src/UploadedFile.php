@@ -1,5 +1,4 @@
 <?php
-
 namespace Pluf\Http;
 
 use Psr\Http\Message\StreamInterface;
@@ -9,6 +8,7 @@ use RuntimeException;
 
 class UploadedFile implements UploadedFileInterface
 {
+
     /**
      * The client-provided full path to the file
      *
@@ -31,6 +31,7 @@ class UploadedFile implements UploadedFileInterface
     protected $type;
 
     /**
+     *
      * @var int|null
      */
     protected $size;
@@ -50,6 +51,7 @@ class UploadedFile implements UploadedFileInterface
     protected $sapi = false;
 
     /**
+     *
      * @var StreamInterface|null
      */
     protected $stream;
@@ -62,25 +64,26 @@ class UploadedFile implements UploadedFileInterface
     protected $moved = false;
 
     /**
-     * @param string|StreamInterface $fileNameOrStream The full path to the uploaded file provided by the client,
-     *                                                 or a StreamInterface instance.
-     * @param string|null            $name             The file name.
-     * @param string|null            $type             The file media type.
-     * @param int|null               $size             The file size in bytes.
-     * @param int                    $error            The UPLOAD_ERR_XXX code representing the status of the upload.
-     * @param bool                   $sapi             Indicates if the upload is in a SAPI environment.
+     *
+     * @param string|StreamInterface $fileNameOrStream
+     *            The full path to the uploaded file provided by the client,
+     *            or a StreamInterface instance.
+     * @param string|null $name
+     *            The file name.
+     * @param string|null $type
+     *            The file media type.
+     * @param int|null $size
+     *            The file size in bytes.
+     * @param int $error
+     *            The UPLOAD_ERR_XXX code representing the status of the upload.
+     * @param bool $sapi
+     *            Indicates if the upload is in a SAPI environment.
      */
-    final public function __construct(
-        $fileNameOrStream,
-        ?string $name = null,
-        ?string $type = null,
-        ?int $size = null,
-        int $error = UPLOAD_ERR_OK,
-        bool $sapi = false
-    ) {
+    final public function __construct($fileNameOrStream, ?string $name = null, ?string $type = null, ?int $size = null, int $error = UPLOAD_ERR_OK, bool $sapi = false)
+    {
         if ($fileNameOrStream instanceof StreamInterface) {
             $file = $fileNameOrStream->getMetadata('uri');
-            if (!is_string($file)) {
+            if (! is_string($file)) {
                 throw new InvalidArgumentException('No URI associated with the stream.');
             }
             $this->file = $file;
@@ -88,9 +91,7 @@ class UploadedFile implements UploadedFileInterface
         } elseif (is_string($fileNameOrStream)) {
             $this->file = $fileNameOrStream;
         } else {
-            throw new InvalidArgumentException(
-                'Please provide a string (full path to the uploaded file) or an instance of StreamInterface.'
-            );
+            throw new InvalidArgumentException('Please provide a string (full path to the uploaded file) or an instance of StreamInterface.');
         }
         $this->name = $name;
         $this->type = $type;
@@ -100,6 +101,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
+     *
      * {@inheritdoc}
      */
     public function getStream()
@@ -108,7 +110,7 @@ class UploadedFile implements UploadedFileInterface
             throw new RuntimeException(sprintf('Uploaded file %s has already been moved', $this->name));
         }
 
-        if (!$this->stream) {
+        if (! $this->stream) {
             $this->stream = (new StreamFactory())->createStreamFromFile($this->file);
         }
 
@@ -116,6 +118,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
+     *
      * {@inheritdoc}
      */
     public function moveTo($targetPath): void
@@ -125,28 +128,28 @@ class UploadedFile implements UploadedFileInterface
         }
 
         $targetIsStream = strpos($targetPath, '://') > 0;
-        if (!$targetIsStream && !is_writable(dirname($targetPath))) {
+        if (! $targetIsStream && ! is_writable(dirname($targetPath))) {
             throw new InvalidArgumentException('Upload target path is not writable');
         }
 
         if ($targetIsStream) {
-            if (!copy($this->file, $targetPath)) {
+            if (! copy($this->file, $targetPath)) {
                 throw new RuntimeException(sprintf('Error moving uploaded file %s to %s', $this->name, $targetPath));
             }
 
-            if (!unlink($this->file)) {
+            if (! unlink($this->file)) {
                 throw new RuntimeException(sprintf('Error removing uploaded file %s', $this->name));
             }
         } elseif ($this->sapi) {
-            if (!is_uploaded_file($this->file)) {
+            if (! is_uploaded_file($this->file)) {
                 throw new RuntimeException(sprintf('%s is not a valid uploaded file', $this->file));
             }
 
-            if (!move_uploaded_file($this->file, $targetPath)) {
+            if (! move_uploaded_file($this->file, $targetPath)) {
                 throw new RuntimeException(sprintf('Error moving uploaded file %s to %s', $this->name, $targetPath));
             }
         } else {
-            if (!rename($this->file, $targetPath)) {
+            if (! rename($this->file, $targetPath)) {
                 throw new RuntimeException(sprintf('Error moving uploaded file %s to %s', $this->name, $targetPath));
             }
         }
@@ -155,6 +158,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
+     *
      * {@inheritdoc}
      */
     public function getError(): int
@@ -163,6 +167,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
+     *
      * {@inheritdoc}
      */
     public function getClientFilename(): ?string
@@ -171,6 +176,7 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
+     *
      * {@inheritdoc}
      */
     public function getClientMediaType(): ?string
@@ -179,18 +185,19 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
+     *
      * {@inheritdoc}
      */
     public function getSize(): ?int
     {
         return $this->size;
     }
-    
+
     /**
      * Returns the client-provided full path to the file
      *
      * @internal This method is not part of the PSR-7 standard
-     *
+     *          
      * @return string
      */
     public function getFilePath(): string
@@ -202,18 +209,19 @@ class UploadedFile implements UploadedFileInterface
      * Create a normalized tree of UploadedFile instances from the Environment.
      *
      * @internal This method is not part of the PSR-7 standard.
-     *
-     * @param array $globals The global server variables.
-     *
+     *          
+     * @param array $globals
+     *            The global server variables.
+     *            
      * @return array A normalized tree of UploadedFile instances or null if none are provided.
      */
     public static function createFromGlobals(array $globals): array
     {
-        if (isset($globals['slim.files']) && is_array($globals['slim.files'])) {
-            return $globals['slim.files'];
+        if (isset($globals['pluf.files']) && is_array($globals['pluf.files'])) {
+            return $globals['pluf.files'];
         }
 
-        if (!empty($_FILES)) {
+        if (! empty($_FILES)) {
             return static::parseUploadedFiles($_FILES);
         }
 
@@ -221,19 +229,21 @@ class UploadedFile implements UploadedFileInterface
     }
 
     /**
-     * Parse a non-normalized, i.e. $_FILES superglobal, tree of uploaded file data.
+     * Parse a non-normalized, i.e.
+     * $_FILES superglobal, tree of uploaded file data.
      *
      * @internal This method is not part of the PSR-7 standard.
-     *
-     * @param array $uploadedFiles The non-normalized tree of uploaded file data.
-     *
+     *          
+     * @param array $uploadedFiles
+     *            The non-normalized tree of uploaded file data.
+     *            
      * @return array A normalized tree of UploadedFile instances.
      */
     private static function parseUploadedFiles(array $uploadedFiles): array
     {
         $parsed = [];
         foreach ($uploadedFiles as $field => $uploadedFile) {
-            if (!isset($uploadedFile['error'])) {
+            if (! isset($uploadedFile['error'])) {
                 if (is_array($uploadedFile)) {
                     $parsed[$field] = static::parseUploadedFiles($uploadedFile);
                 }
@@ -241,15 +251,8 @@ class UploadedFile implements UploadedFileInterface
             }
 
             $parsed[$field] = [];
-            if (!is_array($uploadedFile['error'])) {
-                $parsed[$field] = new static(
-                    $uploadedFile['tmp_name'],
-                    isset($uploadedFile['name']) ? $uploadedFile['name'] : null,
-                    isset($uploadedFile['type']) ? $uploadedFile['type'] : null,
-                    isset($uploadedFile['size']) ? $uploadedFile['size'] : null,
-                    $uploadedFile['error'],
-                    true
-                );
+            if (! is_array($uploadedFile['error'])) {
+                $parsed[$field] = new static($uploadedFile['tmp_name'], isset($uploadedFile['name']) ? $uploadedFile['name'] : null, isset($uploadedFile['type']) ? $uploadedFile['type'] : null, isset($uploadedFile['size']) ? $uploadedFile['size'] : null, $uploadedFile['error'], true);
             } else {
                 $subArray = [];
                 foreach ($uploadedFile['error'] as $fileIdx => $error) {

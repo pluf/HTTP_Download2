@@ -1,5 +1,4 @@
 <?php
-
 namespace Pluf\Tests;
 
 use PHPUnit\Framework\TestCase;
@@ -16,9 +15,12 @@ use RuntimeException;
 
 class UploadedFileTest extends TestCase
 {
+
     private static $filename = './phpUxcOty';
 
-    private static $tmpFiles = ['./phpUxcOty'];
+    private static $tmpFiles = [
+        './phpUxcOty'
+    ];
 
     public static function setUpBeforeClass(): void
     {
@@ -50,6 +52,7 @@ class UploadedFileTest extends TestCase
     }
 
     /**
+     *
      * @return UploadedFile
      */
     protected function generateNewTmpFile()
@@ -66,9 +69,12 @@ class UploadedFileTest extends TestCase
     }
 
     /**
-     * @param array $input    The input array to parse.
-     * @param array $expected The expected normalized output.
      *
+     * @param array $input
+     *            The input array to parse.
+     * @param array $expected
+     *            The expected normalized output.
+     *            
      * @dataProvider providerCreateFromGlobals
      */
     public function testCreateFromGlobalsFromFilesSuperglobal(array $input, array $expected)
@@ -80,14 +86,16 @@ class UploadedFileTest extends TestCase
     }
 
     /**
-     * @param array $input The input array to parse.
      *
+     * @param array $input
+     *            The input array to parse.
+     *            
      * @dataProvider providerCreateFromGlobals
      */
     public function testCreateFromGlobalsFromUserData(array $input)
     {
-        //If slim.files provided - it will return what was provided
-        $userData['slim.files'] = $input;
+        // If slim.files provided - it will return what was provided
+        $userData['pluf.files'] = $input;
 
         $uploadedFile = UploadedFile::createFromGlobals(Environment::mock($userData));
         $this->assertEquals($input, $uploadedFile);
@@ -102,6 +110,7 @@ class UploadedFileTest extends TestCase
     }
 
     /**
+     *
      * @return UploadedFile
      */
     public function testConstructor()
@@ -111,17 +120,10 @@ class UploadedFileTest extends TestCase
             'name' => 'my-avatar.txt',
             'size' => 8,
             'type' => 'text/plain',
-            'error' => 0,
+            'error' => 0
         ];
 
-        $uploadedFile = new UploadedFile(
-            $attr['tmp_name'],
-            $attr['name'],
-            $attr['type'],
-            $attr['size'],
-            $attr['error'],
-            false
-        );
+        $uploadedFile = new UploadedFile($attr['tmp_name'], $attr['name'], $attr['type'], $attr['size'], $attr['error'], false);
 
         $this->assertEquals($attr['name'], $uploadedFile->getClientFilename());
         $this->assertEquals($attr['type'], $uploadedFile->getClientMediaType());
@@ -133,6 +135,7 @@ class UploadedFileTest extends TestCase
     }
 
     /**
+     *
      * @return UploadedFile
      */
     public function testConstructorSapi()
@@ -142,17 +145,10 @@ class UploadedFileTest extends TestCase
             'name' => 'my-avatar.txt',
             'size' => 8,
             'type' => 'text/plain',
-            'error' => 0,
+            'error' => 0
         ];
 
-        $uploadedFile = new UploadedFile(
-            $attr['tmp_name'],
-            $attr['name'],
-            $attr['type'],
-            $attr['size'],
-            $attr['error'],
-            true
-        );
+        $uploadedFile = new UploadedFile($attr['tmp_name'], $attr['name'], $attr['type'], $attr['size'], $attr['error'], true);
 
         $this->assertEquals($attr['name'], $uploadedFile->getClientFilename());
         $this->assertEquals($attr['type'], $uploadedFile->getClientMediaType());
@@ -164,6 +160,7 @@ class UploadedFileTest extends TestCase
     }
 
     /**
+     *
      * @depends testConstructor
      *
      * @param UploadedFile $uploadedFile
@@ -180,6 +177,7 @@ class UploadedFileTest extends TestCase
     }
 
     /**
+     *
      * @depends testConstructor
      *
      * @param UploadedFile $uploadedFile
@@ -195,6 +193,7 @@ class UploadedFileTest extends TestCase
     }
 
     /**
+     *
      * @depends testConstructor
      *
      * @param UploadedFile $uploadedFile
@@ -219,7 +218,6 @@ class UploadedFileTest extends TestCase
     public function testMoveToRenameFailure()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageRegExp('/^Error moving uploaded file .* to .*$/');
 
         $uploadedFile = $this->generateNewTmpFile();
 
@@ -231,6 +229,7 @@ class UploadedFileTest extends TestCase
     }
 
     /**
+     *
      * @depends testConstructorSapi
      *
      * @param UploadedFile $uploadedFile
@@ -246,6 +245,7 @@ class UploadedFileTest extends TestCase
     }
 
     /**
+     *
      * @depends testConstructorSapi
      *
      * @param UploadedFile $uploadedFile
@@ -264,6 +264,7 @@ class UploadedFileTest extends TestCase
     }
 
     /**
+     *
      * @depends testMoveTo
      *
      * @param UploadedFile $uploadedFile
@@ -337,7 +338,6 @@ class UploadedFileTest extends TestCase
     public function testMoveToStreamCopyFailure()
     {
         $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessage('Error moving uploaded file  to php://output');
 
         $uploadedFile = $this->generateNewTmpFile();
 
@@ -370,17 +370,10 @@ class UploadedFileTest extends TestCase
         $clientMediaType = 'text/plain';
 
         $stream = call_user_func($streamFactory, $content);
-        $file = call_user_func(
-            $uploadedFileFactory,
-            $stream,
-            strlen($content),
-            $error,
-            $clientFilename,
-            $clientMediaType
-        );
+        $file = call_user_func($uploadedFileFactory, $stream, strlen($content), $error, $clientFilename, $clientMediaType);
 
         $this->assertInstanceOf(UploadedFileInterface::class, $file);
-        $this->assertSame($content, (string)$file->getStream());
+        $this->assertSame($content, (string) $file->getStream());
         $this->assertSame(strlen($content), $file->getSize());
         $this->assertSame($error, $file->getError());
         $this->assertSame($clientFilename, $file->getClientFilename());
@@ -405,9 +398,11 @@ class UploadedFileTest extends TestCase
 
         $streamProphecy = $this->prophesize(StreamInterface::class);
 
-        /** @noinspection PhpUndefinedMethodInspection */
-        $streamProphecy
-            ->getMetadata('uri')
+        /**
+         *
+         * @noinspection PhpUndefinedMethodInspection
+         */
+        $streamProphecy->getMetadata('uri')
             ->willReturn(null)
             ->shouldBeCalled();
         $stream = $streamProphecy->reveal();
@@ -429,8 +424,8 @@ class UploadedFileTest extends TestCase
                         'name' => 'my-avatar.png',
                         'size' => 90996,
                         'type' => 'image/png',
-                        'error' => 0,
-                    ],
+                        'error' => 0
+                    ]
                 ],
                 // expected format of array
                 [
@@ -446,19 +441,12 @@ class UploadedFileTest extends TestCase
                         'name' => 'my-avatar.png',
                         'size' => 90996,
                         'type' => 'image/png',
-                        'error' => 7,
-                    ],
+                        'error' => 7
+                    ]
                 ],
                 // expected format of array
                 [
-                    'avatar' => new UploadedFile(
-                        'phpUxcOty',
-                        'my-avatar.png',
-                        'image/png',
-                        90996,
-                        UPLOAD_ERR_CANT_WRITE,
-                        true
-                    )
+                    'avatar' => new UploadedFile('phpUxcOty', 'my-avatar.png', 'image/png', 90996, UPLOAD_ERR_CANT_WRITE, true)
                 ]
             ],
 
@@ -469,15 +457,15 @@ class UploadedFileTest extends TestCase
                     'avatars' => [
                         'tmp_name' => [
                             0 => __DIR__ . DIRECTORY_SEPARATOR . 'file0.txt',
-                            1 => __DIR__ . DIRECTORY_SEPARATOR . 'file1.html',
+                            1 => __DIR__ . DIRECTORY_SEPARATOR . 'file1.html'
                         ],
                         'name' => [
                             0 => 'file0.txt',
-                            1 => 'file1.html',
+                            1 => 'file1.html'
                         ],
                         'type' => [
                             0 => 'text/plain',
-                            1 => 'text/html',
+                            1 => 'text/html'
                         ],
                         'error' => [
                             0 => 0,
@@ -487,28 +475,14 @@ class UploadedFileTest extends TestCase
                             0 => 0,
                             1 => 0
                         ]
-                    ],
+                    ]
                 ],
                 // expected format of array
                 [
                     'avatars' => [
-                        0 => new UploadedFile(
-                            __DIR__ . DIRECTORY_SEPARATOR . 'file0.txt',
-                            'file0.txt',
-                            'text/plain',
-                            null,
-                            UPLOAD_ERR_OK,
-                            true
-                        ),
-                        1 => new UploadedFile(
-                            __DIR__ . DIRECTORY_SEPARATOR . 'file1.html',
-                            'file1.html',
-                            'text/html',
-                            null,
-                            UPLOAD_ERR_OK,
-                            true
-                        ),
-                    ],
+                        0 => new UploadedFile(__DIR__ . DIRECTORY_SEPARATOR . 'file0.txt', 'file0.txt', 'text/plain', null, UPLOAD_ERR_OK, true),
+                        1 => new UploadedFile(__DIR__ . DIRECTORY_SEPARATOR . 'file1.html', 'file1.html', 'text/html', null, UPLOAD_ERR_OK, true)
+                    ]
                 ]
             ],
             // array of files as multidimensional array: <input name="avatars[]" type="file">
@@ -519,36 +493,34 @@ class UploadedFileTest extends TestCase
                         'avatars' => [
                             'tmp_name' => [
                                 0 => __DIR__ . DIRECTORY_SEPARATOR . 'file0.txt',
-                                1 => __DIR__ . DIRECTORY_SEPARATOR . 'file1.html',
+                                1 => __DIR__ . DIRECTORY_SEPARATOR . 'file1.html'
                             ],
                             'name' => [
                                 0 => 'file0.txt',
-                                1 => 'file1.html',
+                                1 => 'file1.html'
                             ],
                             'type' => [
                                 0 => 'text/plain',
-                                1 => 'text/html',
+                                1 => 'text/html'
                             ],
                             'size' => [
                                 0 => 0,
-                                1 => 0,
-                            ],
-                        ],
-                    ],
+                                1 => 0
+                            ]
+                        ]
+                    ]
                 ],
                 // expected format of array
                 [
-                    0 =>
-                        [
-                            'avatars' =>
-                                [
-                                    'tmp_name' => [],
-                                    'name' => [],
-                                    'type' => [],
-                                    'size' => [],
-                                ],
-                        ],
-                ],
+                    0 => [
+                        'avatars' => [
+                            'tmp_name' => [],
+                            'name' => [],
+                            'type' => [],
+                            'size' => []
+                        ]
+                    ]
+                ]
             ],
             // single nested file: <input name="details[avatar]" type="file">
             [
@@ -556,34 +528,27 @@ class UploadedFileTest extends TestCase
                 [
                     'details' => [
                         'tmp_name' => [
-                            'avatar' => __DIR__ . DIRECTORY_SEPARATOR . 'file0.txt',
+                            'avatar' => __DIR__ . DIRECTORY_SEPARATOR . 'file0.txt'
                         ],
                         'name' => [
-                            'avatar' => 'file0.txt',
+                            'avatar' => 'file0.txt'
                         ],
                         'type' => [
-                            'avatar' => 'text/plain',
+                            'avatar' => 'text/plain'
                         ],
                         'error' => [
-                            'avatar' => 0,
+                            'avatar' => 0
                         ],
                         'size' => [
-                            'avatar' => 0,
-                        ],
-                    ],
+                            'avatar' => 0
+                        ]
+                    ]
                 ],
                 // expected format of array
                 [
                     'details' => [
-                        'avatar' => new UploadedFile(
-                            __DIR__ . DIRECTORY_SEPARATOR . 'file0.txt',
-                            'file0.txt',
-                            'text/plain',
-                            null,
-                            UPLOAD_ERR_OK,
-                            true
-                        ),
-                    ],
+                        'avatar' => new UploadedFile(__DIR__ . DIRECTORY_SEPARATOR . 'file0.txt', 'file0.txt', 'text/plain', null, UPLOAD_ERR_OK, true)
+                    ]
                 ]
             ],
             // nested array of files: <input name="files[details][avatar][]" type="file">
@@ -594,70 +559,56 @@ class UploadedFileTest extends TestCase
                             'details' => [
                                 'avatar' => [
                                     0 => __DIR__ . DIRECTORY_SEPARATOR . 'file0.txt',
-                                    1 => __DIR__ . DIRECTORY_SEPARATOR . 'file1.html',
-                                ],
-                            ],
+                                    1 => __DIR__ . DIRECTORY_SEPARATOR . 'file1.html'
+                                ]
+                            ]
                         ],
                         'name' => [
                             'details' => [
                                 'avatar' => [
                                     0 => 'file0.txt',
-                                    1 => 'file1.html',
-                                ],
-                            ],
+                                    1 => 'file1.html'
+                                ]
+                            ]
                         ],
                         'type' => [
                             'details' => [
                                 'avatar' => [
                                     0 => 'text/plain',
-                                    1 => 'text/html',
-                                ],
-                            ],
+                                    1 => 'text/html'
+                                ]
+                            ]
                         ],
                         'error' => [
                             'details' => [
                                 'avatar' => [
                                     0 => 0,
                                     1 => 0
-                                ],
-                            ],
+                                ]
+                            ]
                         ],
                         'size' => [
                             'details' => [
                                 'avatar' => [
                                     0 => 0,
                                     1 => 0
-                                ],
-                            ],
-                        ],
-                    ],
+                                ]
+                            ]
+                        ]
+                    ]
                 ],
                 // expected format of array
                 [
                     'files' => [
                         'details' => [
                             'avatar' => [
-                                0 => new UploadedFile(
-                                    __DIR__ . DIRECTORY_SEPARATOR . 'file0.txt',
-                                    'file0.txt',
-                                    'text/plain',
-                                    null,
-                                    UPLOAD_ERR_OK,
-                                    true
-                                ),
-                                1 => new UploadedFile(
-                                    __DIR__ . DIRECTORY_SEPARATOR . 'file1.html',
-                                    'file1.html',
-                                    'text/html',
-                                    null,
-                                    UPLOAD_ERR_OK,
-                                    true
-                                ),
-                            ],
-                        ],
-                    ],
+                                0 => new UploadedFile(__DIR__ . DIRECTORY_SEPARATOR . 'file0.txt', 'file0.txt', 'text/plain', null, UPLOAD_ERR_OK, true),
+                                1 => new UploadedFile(__DIR__ . DIRECTORY_SEPARATOR . 'file1.html', 'file1.html', 'text/html', null, UPLOAD_ERR_OK, true)
+                            ]
+                        ]
+                    ]
                 ]
-            ],
+            ]
         ];
     }
 }

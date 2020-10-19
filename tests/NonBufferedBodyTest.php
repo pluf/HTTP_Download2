@@ -8,8 +8,8 @@ use Pluf\Tests\Assets\HeaderStack;
 use RuntimeException;
 
 /**
- * 
- * @author maso
+ *
+ * @runInSeparateProcess
  *
  */
 class NonBufferedBodyTest extends TestCase
@@ -39,7 +39,12 @@ class NonBufferedBodyTest extends TestCase
         self::assertSame('', $body->getContents(), 'Data cannot be retrieved once written');
         self::assertNull($body->getMetadata(), 'Metadata mechanism is not implemented');
     }
-
+    
+    /**
+     *
+     * @runInSeparateProcess
+     *
+     */
     public function testWrite()
     {
         $ob_initial_level = ob_get_level();
@@ -70,7 +75,12 @@ class NonBufferedBodyTest extends TestCase
         $this->assertEquals(strlen('world'), $length1);
         $this->assertEquals('buffer content: hello world', $contents);
     }
-
+    
+    /**
+     *
+     * @runInSeparateProcess
+     *
+     */
     public function testWithHeader()
     {
         (new Response())->withBody(new NonBufferedBody())->withHeader('Foo', 'Bar');
@@ -83,7 +93,12 @@ class NonBufferedBodyTest extends TestCase
             ]
         ], HeaderStack::stack());
     }
-
+    
+    /**
+     *
+     * @runInSeparateProcess
+     *
+     */
     public function testWithAddedHeader()
     {
         (new Response())->withBody(new NonBufferedBody())
