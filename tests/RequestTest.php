@@ -291,6 +291,7 @@ class RequestTest extends TestCase
         $serverParams = [];
         $body = new RequestBody();
         $request = new Request('B@R', $uri, $headers, $cookies, $serverParams, $body);
+        return $request;
     }
 
     /**

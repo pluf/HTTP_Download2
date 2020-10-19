@@ -92,7 +92,7 @@ class Headers extends Collection implements HeadersInterface
     {
         $all = parent::all();
         $out = [];
-        foreach ($all as $key => $props) {
+        foreach ($all as $props) {
             $out[$props['originalKey']] = $props['value'];
         }
 

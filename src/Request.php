@@ -167,10 +167,12 @@ class Request extends Message implements ServerRequestInterface
      */
     public function __construct($method, UriInterface $uri, HeadersInterface $headers, array $cookies, array $serverParams, StreamInterface $body, array $uploadedFiles = [])
     {
+        $e = null;
         try {
             $this->originalMethod = $this->filterMethod($method);
-        } catch (InvalidMethodException $e) {
+        } catch (InvalidMethodException $ex) {
             $this->originalMethod = $method;
+            $e = $ex;
         }
 
         $this->uri = $uri;
@@ -226,10 +228,10 @@ class Request extends Message implements ServerRequestInterface
         });
 
         $this->registerMediaTypeParser('application/x-www-form-urlencoded', function ($input) {
+            $data = null;
             parse_str($input, $data);
             return $data;
         });
-
         // if the request had an invalid method, we can throw it now
         if (isset($e) && $e instanceof InvalidMethodException) {
             throw $e;

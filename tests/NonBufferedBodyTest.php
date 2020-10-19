@@ -6,6 +6,11 @@ use Pluf\Http\NonBufferedBody;
 use Pluf\Http\Response;
 use Pluf\Tests\Assets\HeaderStack;
 
+/**
+ *
+ * @runInSeparateProcess
+ *
+ */
 class NonBufferedBodyTest extends TestCase
 {
 
@@ -39,9 +44,16 @@ class NonBufferedBodyTest extends TestCase
         self::assertNull($body->getMetadata(), 'Metadata mechanism is not implemented');
     }
 
+    /**
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testWrite()
     {
         $ob_initial_level = ob_get_level();
+        $this->outputBufferingActive = true;
+        $this->outputBufferingLevel = ob_get_level();
 
         // Start output buffering.
         ob_start();
@@ -70,6 +82,11 @@ class NonBufferedBodyTest extends TestCase
         $this->assertEquals('buffer content: hello world', $contents);
     }
 
+    /**
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testWithHeader()
     {
         (new Response())->withBody(new NonBufferedBody())->withHeader('Foo', 'Bar');
@@ -83,6 +100,11 @@ class NonBufferedBodyTest extends TestCase
         ], HeaderStack::stack());
     }
 
+    /**
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testWithAddedHeader()
     {
         (new Response())->withBody(new NonBufferedBody())
@@ -103,6 +125,11 @@ class NonBufferedBodyTest extends TestCase
         ], HeaderStack::stack());
     }
 
+    /**
+     *
+     * @runInSeparateProcess
+     * @preserveGlobalState disabled
+     */
     public function testWithoutHeader()
     {
         (new Response())->withBody(new NonBufferedBody())

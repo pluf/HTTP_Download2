@@ -171,6 +171,28 @@ class UploadedFilesTest extends TestCase
 
     /**
      *
+     * @expectedException RuntimeException
+     * @depends testConstructor
+     */
+    public function testMoveToReadonly(UploadedFile $uploadedFile)
+    {
+        $tempName = uniqid('filer-');
+        $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $tempName;
+
+        touch($path);
+        chmod($path, '0600');
+
+        $uploadedFile->moveTo($path);
+
+        $this->assertFileExists($path);
+
+        unlink($path);
+
+        return $uploadedFile;
+    }
+
+    /**
+     *
      * @depends testMoveTo
      *
      * @param UploadedFile $uploadedFile
