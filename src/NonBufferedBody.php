@@ -1,18 +1,16 @@
 <?php
+
 namespace Pluf\Http;
 
 use Psr\Http\Message\StreamInterface;
+use RuntimeException;
 
-/**
- * Represents a non-readable stream that whenever it is written pushes
- * the data back to the browser immediately.
- */
 class NonBufferedBody implements StreamInterface
 {
     /**
      * {@inheritdoc}
      */
-    public function __toString()
+    public function __toString(): string
     {
         return '';
     }
@@ -20,8 +18,9 @@ class NonBufferedBody implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function close()
+    public function close(): void
     {
+        throw new RuntimeException('A NonBufferedBody is not closable.');
     }
 
     /**
@@ -35,7 +34,7 @@ class NonBufferedBody implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function getSize()
+    public function getSize(): ?int
     {
         return null;
     }
@@ -43,7 +42,7 @@ class NonBufferedBody implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function tell()
+    public function tell(): int
     {
         return 0;
     }
@@ -51,7 +50,7 @@ class NonBufferedBody implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function eof()
+    public function eof(): bool
     {
         return true;
     }
@@ -59,7 +58,7 @@ class NonBufferedBody implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         return false;
     }
@@ -67,21 +66,23 @@ class NonBufferedBody implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET): void
     {
+        throw new RuntimeException('A NonBufferedBody is not seekable.');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
+        throw new RuntimeException('A NonBufferedBody is not rewindable.');
     }
 
     /**
      * {@inheritdoc}
      */
-    public function isWritable()
+    public function isWritable(): bool
     {
         return true;
     }
@@ -89,7 +90,7 @@ class NonBufferedBody implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function write($string)
+    public function write($string): int
     {
         $buffered = '';
         while (0 < ob_get_level()) {
@@ -106,7 +107,7 @@ class NonBufferedBody implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function isReadable()
+    public function isReadable(): bool
     {
         return false;
     }
@@ -114,7 +115,15 @@ class NonBufferedBody implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function read($length)
+    public function read($length): string
+    {
+        throw new RuntimeException('A NonBufferedBody is not readable.');
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function getContents(): string
     {
         return '';
     }
@@ -122,15 +131,7 @@ class NonBufferedBody implements StreamInterface
     /**
      * {@inheritdoc}
      */
-    public function getContents()
-    {
-        return '';
-    }
-
-    /**
-     * {@inheritdoc}
-     */
-    public function getMetadata($key = null)
+    public function getMetadata($key = null): ?array
     {
         return null;
     }

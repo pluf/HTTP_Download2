@@ -1,270 +1,202 @@
 <?php
+
 namespace Pluf\Tests;
 
 use PHPUnit\Framework\TestCase;
-use Pluf\Http\Environment;
 use Pluf\Http\Headers;
-use ReflectionProperty;
+use InvalidArgumentException;
+use stdClass;
 
 class HeadersTest extends TestCase
 {
-
-    public function testCreateFromEnvironment()
+    public function testCreateFromGlobals()
     {
-        $e = Environment::mock([
-            'HTTP_ACCEPT' => 'application/json'
-        ]);
-        $h = Headers::createFromEnvironment($e);
-        $prop = new ReflectionProperty($h, 'data');
-        $prop->setAccessible(true);
+        $GLOBALS['getallheaders_return'] = [
+            'HTTP_ACCEPT' => 'application/json',
+        ];
 
-        $this->assertInternalType('array', $prop->getValue($h)['accept']);
-        $this->assertEquals('application/json', $prop->getValue($h)['accept']['value'][0]);
-    }
+        $headers = Headers::createFromGlobals();
 
-    public function testCreateFromEnvironmentWithSpecialHeaders()
-    {
-        $e = Environment::mock([
-            'CONTENT_TYPE' => 'application/json'
-        ]);
-        $h = Headers::createFromEnvironment($e);
-        $prop = new ReflectionProperty($h, 'data');
-        $prop->setAccessible(true);
-
-        $this->assertInternalType('array', $prop->getValue($h)['content-type']);
-        $this->assertEquals('application/json', $prop->getValue($h)['content-type']['value'][0]);
-    }
-
-    public function testCreateFromEnvironmentIgnoresHeaders()
-    {
-        $e = Environment::mock([
-            'CONTENT_TYPE' => 'text/csv',
-            'HTTP_CONTENT_LENGTH' => 1230 // <-- Ignored
-        ]);
-        $h = Headers::createFromEnvironment($e);
-        $prop = new ReflectionProperty($h, 'data');
-        $prop->setAccessible(true);
-
-        $this->assertNotContains('content-length', $prop->getValue($h));
-    }
-
-    public function testConstructor()
-    {
-        $h = new Headers([
-            'Content-Length' => 100
-        ]);
-        $prop = new ReflectionProperty($h, 'data');
-        $prop->setAccessible(true);
-
-        $this->assertInternalType('array', $prop->getValue($h)['content-length']);
-        $this->assertEquals(100, $prop->getValue($h)['content-length']['value'][0]);
-    }
-
-    public function testSetSingleValue()
-    {
-        $h = new Headers();
-        $h->set('Content-Length', 100);
-        $prop = new ReflectionProperty($h, 'data');
-        $prop->setAccessible(true);
-
-        $this->assertInternalType('array', $prop->getValue($h)['content-length']);
-        $this->assertEquals(100, $prop->getValue($h)['content-length']['value'][0]);
-    }
-
-    public function testSetArrayValue()
-    {
-        $h = new Headers();
-        $h->set('Allow', [
-            'GET',
-            'POST'
-        ]);
-        $prop = new ReflectionProperty($h, 'data');
-        $prop->setAccessible(true);
-
-        $this->assertInternalType('array', $prop->getValue($h)['allow']);
-        $this->assertEquals([
-            'GET',
-            'POST'
-        ], $prop->getValue($h)['allow']['value']);
-    }
-
-    public function testGet()
-    {
-        $h = new Headers();
-        $prop = new ReflectionProperty($h, 'data');
-        $prop->setAccessible(true);
-        $prop->setValue($h, [
-            'allow' => [
-                'value' => [
-                    'GET',
-                    'POST'
-                ],
-                'originalKey' => 'Allow'
-            ]
-        ]);
-
-        $this->assertEquals([
-            'GET',
-            'POST'
-        ], $h->get('Allow'));
-    }
-
-    public function testGetOriginalKey()
-    {
-        $h = new Headers();
-        $h->set('http-test_key', 'testValue');
-        $h->get('test-key');
-
-        $value = $h->get('test-key');
-
-        $this->assertEquals('testValue', reset($value));
-        $this->assertEquals('http-test_key', $h->getOriginalKey('test-key'));
-        $this->assertNull($h->getOriginalKey('test-non-existing'));
-    }
-
-    public function testGetNotExists()
-    {
-        $h = new Headers();
-
-        $this->assertNull($h->get('Foo'));
-    }
-
-    public function testAddNewValue()
-    {
-        $h = new Headers();
-        $h->add('Foo', 'Bar');
-        $prop = new ReflectionProperty($h, 'data');
-        $prop->setAccessible(true);
-
-        $this->assertInternalType('array', $prop->getValue($h)['foo']);
-        $this->assertEquals([
-            'Bar'
-        ], $prop->getValue($h)['foo']['value']);
-    }
-
-    public function testAddAnotherValue()
-    {
-        $h = new Headers();
-        $h->add('Foo', 'Bar');
-        $h->add('Foo', 'Xyz');
-        $prop = new ReflectionProperty($h, 'data');
-        $prop->setAccessible(true);
-
-        $this->assertInternalType('array', $prop->getValue($h)['foo']);
-        $this->assertEquals([
-            'Bar',
-            'Xyz'
-        ], $prop->getValue($h)['foo']['value']);
-    }
-
-    public function testAddArrayValue()
-    {
-        $h = new Headers();
-        $h->add('Foo', 'Bar');
-        $h->add('Foo', [
-            'Xyz',
-            '123'
-        ]);
-        $prop = new ReflectionProperty($h, 'data');
-        $prop->setAccessible(true);
-
-        $this->assertInternalType('array', $prop->getValue($h)['foo']);
-        $this->assertEquals([
-            'Bar',
-            'Xyz',
-            '123'
-        ], $prop->getValue($h)['foo']['value']);
-    }
-
-    public function testHas()
-    {
-        $h = new Headers();
-        $prop = new ReflectionProperty($h, 'data');
-        $prop->setAccessible(true);
-        $prop->setValue($h, [
-            'allow' => [
-                'value' => [
-                    'GET',
-                    'POST'
-                ],
-                'originalKey' => 'Allow'
-            ]
-        ]);
-        $this->assertTrue($h->has('allow'));
-        $this->assertFalse($h->has('foo'));
-    }
-
-    public function testRemove()
-    {
-        $h = new Headers();
-        $prop = new ReflectionProperty($h, 'data');
-        $prop->setAccessible(true);
-        $prop->setValue($h, [
-            'Allow' => [
-                'value' => [
-                    'GET',
-                    'POST'
-                ],
-                'originalKey' => 'Allow'
-            ]
-        ]);
-        $h->remove('Allow');
-
-        $this->assertNotContains('Allow', $prop->getValue($h));
-    }
-
-    public function testOriginalKeys()
-    {
-        $h = new Headers();
-        $prop = new ReflectionProperty($h, 'data');
-        $prop->setAccessible(true);
-        $prop->setValue($h, [
-            'Allow' => [
-                'value' => [
-                    'GET',
-                    'POST'
-                ],
-                'originalKey' => 'ALLOW'
-            ]
-        ]);
-        $all = $h->all();
-
-        $this->assertArrayHasKey('ALLOW', $all);
-    }
-
-    public function testNormalizeKey()
-    {
-        $h = new Headers();
-        $this->assertEquals('foo-bar', $h->normalizeKey('HTTP_FOO_BAR'));
-        $this->assertEquals('foo-bar', $h->normalizeKey('HTTP-FOO-BAR'));
-        $this->assertEquals('foo-bar', $h->normalizeKey('Http-Foo-Bar'));
-        $this->assertEquals('foo-bar', $h->normalizeKey('Http_Foo_Bar'));
-        $this->assertEquals('foo-bar', $h->normalizeKey('http_foo_bar'));
-        $this->assertEquals('foo-bar', $h->normalizeKey('http-foo-bar'));
-    }
-
-    public function testDetermineAuthorization()
-    {
-        $e = Environment::mock([]);
-        $en = Headers::determineAuthorization($e);
-        $h = Headers::createFromEnvironment($e);
-
-        $this->assertEquals('electrolytes', $en->get('HTTP_AUTHORIZATION'));
-        $this->assertEquals([
-            'electrolytes'
-        ], $h->get('Authorization'));
-    }
-
-    public function testDetermineAuthorizationReturnsEarlyIfHeadersIsNotArray()
-    {
-        $e = Environment::mock([]);
-
-        $GLOBALS['getallheaders_return'] = false;
-        $en = Headers::determineAuthorization($e);
-        $h = Headers::createFromEnvironment($e);
         unset($GLOBALS['getallheaders_return']);
 
-        $this->assertNull($en->get('HTTP_AUTHORIZATION'));
-        $this->assertNull($h->get('Authorization'));
+        $this->assertEquals(['accept' => ['application/json']], $headers->getHeaders());
+        $this->assertEquals(['ACCEPT' => ['application/json']], $headers->getHeaders(true));
+    }
+
+    public function testCreateFromGlobalsUsesEmptyArrayIfGetAllHeadersReturnsFalse()
+    {
+        $GLOBALS['getallheaders_return'] = false;
+
+        $headers = Headers::createFromGlobals();
+
+        unset($GLOBALS['getallheaders_return']);
+
+        $this->assertEquals([], $headers->getHeaders());
+    }
+
+    public function testAddHeader()
+    {
+        $headers = new Headers([
+            'Accept' => 'application/json',
+        ]);
+
+        $headers->addHeader('Accept', 'text/html');
+
+        $this->assertEquals(['application/json', 'text/html'], $headers->getHeader('Accept'));
+        $this->assertEquals(['accept' => ['application/json', 'text/html']], $headers->getHeaders());
+        $this->assertEquals(['Accept' => ['application/json', 'text/html']], $headers->getHeaders(true));
+    }
+
+    /**
+     */
+    public function testAddHeaderValueEmptyArray()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $headers = new Headers();
+        $headers->addHeader('Header', []);
+    }
+
+    public function testRemoveHeader()
+    {
+        $headers = new Headers([
+            'Accept' => 'application/json',
+        ]);
+
+        $headers->removeHeader('Accept');
+
+        $this->assertEquals([], $headers->getHeader('Accept'));
+        $this->assertEquals([], $headers->getHeaders());
+    }
+
+    /**
+     * @doesNotPerformAssertions
+     */
+    public function testRemoveHeaderByIncompatibleStringWithRFC()
+    {
+        $headers = new Headers();
+        $headers->removeHeader('<incompatible with RFC>');
+    }
+
+    public function testGetHeader()
+    {
+        $headers = new Headers([
+            'Accept' => ['application/json', 'text/html'],
+        ]);
+
+        $this->assertEquals(['application/json', 'text/html'], $headers->getHeader('accept'));
+        $this->assertEquals(['application/json', 'text/html'], $headers->getHeader('Accept'));
+        $this->assertEquals(['application/json', 'text/html'], $headers->getHeader('HTTP_ACCEPT'));
+    }
+
+    public function testGetHeaderReturnsValidatedAndTrimedHeaderDefaultValue()
+    {
+        $headers = new Headers([]);
+
+        $this->assertEquals(['application/json'], $headers->getHeader('accept', ' application/json'));
+    }
+
+    /**
+     */
+    public function testGetHeaderThrowsExceptionWithInvalidDefaultArgument()
+    {
+        $this->expectException(InvalidArgumentException::class);
+
+        $headers = new Headers([]);
+
+        $headers->getHeader('accept', new stdClass());
+    }
+
+    public function testSetHeader()
+    {
+        $headers = new Headers([
+            'Content-Length' => 0,
+        ]);
+
+        $headers->setHeader('Content-Length', 100);
+
+        $this->assertSame(['100'], $headers->getHeader('Content-Length'));
+        $this->assertEquals(['content-length' => ['100']], $headers->getHeaders());
+        $this->assertEquals(['Content-Length' => ['100']], $headers->getHeaders(true));
+    }
+
+    public function testSetHeaderPreservesOriginalCaseIfHeaderAlreadyExists()
+    {
+        $headers = new Headers([
+            'CONTENT-LENGTH' => 0,
+        ]);
+
+        $headers->setHeader('Content-Length', 100);
+
+        $this->assertEquals(['content-length' => ['100']], $headers->getHeaders());
+        $this->assertEquals(['CONTENT-LENGTH' => ['100']], $headers->getHeaders(true));
+    }
+
+    public function testSetHeaders()
+    {
+        $headers = new Headers([
+            'Content-Length' => 0,
+        ]);
+
+        $headers->setHeaders([
+            'Accept' => 'application/json',
+        ]);
+
+        $this->assertEquals(['accept' => ['application/json']], $headers->getHeaders());
+        $this->assertEquals(['Accept' => ['application/json']], $headers->getHeaders(true));
+    }
+
+    public function testHasHeader()
+    {
+        $headers = new Headers([
+            'Accept' => 'application/json',
+        ]);
+
+        $this->assertTrue($headers->hasHeader('accept'));
+        $this->assertTrue($headers->hasHeader('Accept'));
+        $this->assertTrue($headers->hasHeader('HTTP_ACCEPT'));
+    }
+
+    public function testGetHeaders()
+    {
+        $headers = new Headers([
+            'HTTP_ACCEPT' => 'text/html',
+            'HTTP_CONTENT_TYPE' => 'application/json',
+        ]);
+
+        $expectedNormalizedHeaders = [
+            'accept' => ['text/html'],
+            'content-type' => ['application/json'],
+        ];
+
+        $this->assertEquals($expectedNormalizedHeaders, $headers->getHeaders());
+    }
+
+    public function testGetHeadersPreservesOriginalCase()
+    {
+        $headers = new Headers([
+            'HTTP_ACCEPT' => 'text/html',
+            'HTTP_CONTENT_TYPE' => 'application/json',
+        ]);
+
+        $expectedOriginalHeaders = [
+            'ACCEPT' => ['text/html'],
+            'CONTENT-TYPE' => ['application/json'],
+        ];
+
+        $this->assertEquals($expectedOriginalHeaders, $headers->getHeaders(true));
+    }
+
+    public function testParseAuthorizationHeader()
+    {
+        $headers = new Headers([], ['REDIRECT_HTTP_AUTHORIZATION' => 'cookie']);
+        $this->assertEquals(['cookie'], $headers->getHeader('Authorization'));
+
+        $headers = new Headers([], ['PHP_AUTH_USER' => 'user', 'PHP_AUTH_PW' => 'password']);
+        $expectedValue = 'Basic ' . base64_encode('user' . ':' . 'password');
+        $this->assertEquals([$expectedValue], $headers->getHeader('Authorization'));
+
+        $headers = new Headers([], ['PHP_AUTH_DIGEST' => 'digest']);
+        $this->assertEquals(['digest'], $headers->getHeader('Authorization'));
     }
 }

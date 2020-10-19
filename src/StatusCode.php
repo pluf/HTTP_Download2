@@ -6,7 +6,7 @@ class StatusCode
     const HTTP_CONTINUE = 100;
     const HTTP_SWITCHING_PROTOCOLS = 101;
     const HTTP_PROCESSING = 102;
-
+    
     const HTTP_OK = 200;
     const HTTP_CREATED = 201;
     const HTTP_ACCEPTED = 202;
@@ -52,6 +52,7 @@ class StatusCode
     const HTTP_LOCKED = 423;
     const HTTP_FAILED_DEPENDENCY = 424;
     const HTTP_UPGRADE_REQUIRED = 426;
+    const HTTP_RESERVED = 426;
     const HTTP_PRECONDITION_REQUIRED = 428;
     const HTTP_TOO_MANY_REQUESTS = 429;
     const HTTP_REQUEST_HEADER_FIELDS_TOO_LARGE = 431;

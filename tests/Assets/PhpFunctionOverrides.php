@@ -1,90 +1,118 @@
 <?php
-/**
- * This is a direct copy of zend-diactoros/test/TestAsset/Functions.php and is used to override
- * header() and headers_sent() so we can test that they do the right thing.
- *
- * We put these into the Slim namespace, so that Slim\App will use these versions of header() and
- * headers_sent() when we test its output.
- */
-
-namespace Pluf;
+namespace Pluf\Http;
 
 use Pluf\Tests\Assets\HeaderStack;
 
 /**
- * Zend Framework (http://framework.zend.com/)
+ * Return the value of the global variable $GLOBALS['getallheaders_return'] if it exists.
+ * Otherwise the
+ * function override calls the default php built-in function.
  *
- * This file exists to allow overriding the various output-related functions
- * in order to test what happens during the `Server::listen()` cycle.
- *
- * These functions include:
- *
- * - headers_sent(): we want to always return false so that headers will be
- *   emitted, and we can test to see their values.
- * - header(): we want to aggregate calls to this function.
- *
- * The HeaderStack class then aggregates that information for us, and the test
- * harness resets the values pre and post test.
- *
- * @see       http://github.com/zendframework/zend-diactoros for the canonical source repository
- * @copyright Copyright (c) 2015-2016 Zend Technologies USA Inc. (http://www.zend.com)
- * @license   https://github.com/zendframework/zend-diactoros/blob/master/LICENSE.md New BSD License
+ * @return array|false
  */
-
-/**
- * Have headers been sent?
- *
- * @return false
- */
-function headers_sent()
+function getallheaders()
 {
-    return false;
+    if (array_key_exists('getallheaders_return', $GLOBALS)) {
+        return $GLOBALS['getallheaders_return'];
+    }
+
+    return \getallheaders();
 }
 
 /**
  * Emit a header, without creating actual output artifacts
  *
- * @param string   $string
- * @param bool     $replace
+ * @param string $string
+ * @param bool $replace
  * @param int|null $statusCode
  */
 function header($string, $replace = true, $statusCode = null)
 {
-    HeaderStack::push(
-        [
-            'header'      => $string,
-            'replace'     => $replace,
-            'status_code' => $statusCode,
-        ]
-    );
+    HeaderStack::push([
+        'header' => $string,
+        'replace' => $replace,
+        'status_code' => $statusCode
+    ]);
 }
 
 /**
- * Is a file descriptor writable
+ * Remove a previously emmited header from the HeaderStack.
  *
- * @param string $file
- *
- * @return bool
+ * @param string|null $name
  */
-function is_readable($file)
+function header_remove($name = null)
 {
-    if (stripos($file, 'non-readable.cache') !== false) {
-        return false;
-    }
-    return true;
+    HeaderStack::remove($name);
 }
 
 /**
- * Is a path writable
  *
- * @param string $path
+ * @param string $filename
  *
  * @return bool
  */
-function is_writable($path)
+function is_uploaded_file(string $filename): bool
 {
-    if (stripos($path, 'non-writable-directory') !== false) {
-        return false;
+    if (isset($GLOBALS['is_uploaded_file_return'])) {
+        return $GLOBALS['is_uploaded_file_return'];
     }
-    return true;
+
+    return \is_uploaded_file($filename);
+}
+
+/**
+ * Return the level of the output buffering shifted by the value of the global
+ * variable $GLOBALS['ob_get_level_shift'] if it exists.
+ * Otherwise the function
+ * override calls the default php built-in function.
+ *
+ * @return int
+ */
+function ob_get_level(): int
+{
+    if (isset($GLOBALS['ob_get_level_shift'])) {
+        return \ob_get_level() + $GLOBALS['ob_get_level_shift'];
+    }
+
+    return \ob_get_level();
+}
+
+/**
+ *
+ * @param string $source
+ * @param string $destination
+ * @param resource|null $context
+ *
+ * @return bool
+ */
+function copy(string $source, string $destination, $context = null): bool
+{
+    if (isset($GLOBALS['copy_return'])) {
+        return $GLOBALS['copy_return'];
+    }
+
+    if ($context === null) {
+        return \copy($source, $destination);
+    }
+    return \copy($source, $destination, $context);
+}
+
+/**
+ *
+ * @param string $oldName
+ * @param string $newName
+ * @param resource|null $context
+ *
+ * @return bool
+ */
+function rename(string $oldName, string $newName, $context = null): bool
+{
+    if (isset($GLOBALS['rename_return'])) {
+        return $GLOBALS['rename_return'];
+    }
+
+    if ($context === null) {
+        return \rename($oldName, $newName);
+    }
+    return \rename($oldName, $newName, $context = null);
 }

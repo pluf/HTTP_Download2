@@ -3,7 +3,7 @@ namespace Pluf\Http;
 
 use InvalidArgumentException;
 
-class Cookies implements CookiesInterface
+class Cookies
 {
 
     /**
@@ -49,42 +49,57 @@ class Cookies implements CookiesInterface
      * Set default cookie properties
      *
      * @param array $settings
+     *
+     * @return static
      */
-    public function setDefaults(array $settings)
+    public function setDefaults(array $settings): self
     {
         $this->defaults = array_replace($this->defaults, $settings);
+
+        return $this;
     }
 
     /**
+     * Get cookie
      *
-     * {@inheritdoc}
+     * @param string $name
+     * @param string|array|null $default
+     * @return mixed|null
      */
-    public function get($name, $default = null)
+    public function get(string $name, $default = null)
     {
-        return isset($this->requestCookies[$name]) ? $this->requestCookies[$name] : $default;
+        return array_key_exists($name, $this->requestCookies) ? $this->requestCookies[$name] : $default;
     }
 
     /**
+     * Set cookie
      *
-     * {@inheritdoc}
+     * @param string $name
+     * @param string|array $value
+     * @return static
      */
-    public function set($name, $value)
+    public function set(string $name, $value): self
     {
         if (! is_array($value)) {
             $value = [
-                'value' => (string) $value
+                'value' => $value
             ];
         }
+
         $this->responseCookies[$name] = array_replace($this->defaults, $value);
+
+        return $this;
     }
 
     /**
+     * Convert all response cookies into an associate array of header values
      *
-     * {@inheritdoc}
+     * @return array
      */
-    public function toHeaders()
+    public function toHeaders(): array
     {
         $headers = [];
+
         foreach ($this->responseCookies as $name => $properties) {
             $headers[] = $this->toHeader($name, $properties);
         }
@@ -102,7 +117,7 @@ class Cookies implements CookiesInterface
      *            
      * @return string
      */
-    protected function toHeader($name, array $properties)
+    protected function toHeader(string $name, array $properties): string
     {
         $result = urlencode($name) . '=' . urlencode($properties['value']);
 
@@ -120,7 +135,7 @@ class Cookies implements CookiesInterface
             } else {
                 $timestamp = (int) $properties['expires'];
             }
-            if ($timestamp !== 0) {
+            if ($timestamp && $timestamp !== 0) {
                 $result .= '; expires=' . gmdate('D, d-M-Y H:i:s e', $timestamp);
             }
         }
@@ -149,16 +164,21 @@ class Cookies implements CookiesInterface
     }
 
     /**
+     * Parse cookie values from header value
      *
-     * {@inheritdoc}
+     * Returns an associative array of cookie names and values
+     *
+     * @param string|array $header
+     *
+     * @return array
      */
-    public static function parseHeader($header)
+    public static function parseHeader($header): array
     {
-        if (is_array($header) === true) {
+        if (is_array($header)) {
             $header = isset($header[0]) ? $header[0] : '';
         }
 
-        if (is_string($header) === false) {
+        if (! is_string($header)) {
             throw new InvalidArgumentException('Cannot parse Cookie data. Header value must be a string.');
         }
 
@@ -166,15 +186,17 @@ class Cookies implements CookiesInterface
         $pieces = preg_split('@[;]\s*@', $header);
         $cookies = [];
 
-        foreach ($pieces as $cookie) {
-            $cookie = explode('=', $cookie, 2);
+        if (is_array($pieces)) {
+            foreach ($pieces as $cookie) {
+                $cookie = explode('=', $cookie, 2);
 
-            if (count($cookie) === 2) {
-                $key = urldecode($cookie[0]);
-                $value = urldecode($cookie[1]);
+                if (count($cookie) === 2) {
+                    $key = urldecode($cookie[0]);
+                    $value = urldecode($cookie[1]);
 
-                if (! isset($cookies[$key])) {
-                    $cookies[$key] = $value;
+                    if (! isset($cookies[$key])) {
+                        $cookies[$key] = $value;
+                    }
                 }
             }
         }

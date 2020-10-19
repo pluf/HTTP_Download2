@@ -1,15 +1,11 @@
 <?php
+
 namespace Pluf\Http;
 
 use Psr\Http\Message\StreamInterface;
 use InvalidArgumentException;
 use RuntimeException;
 
-/**
- * Represents a data stream as defined in PSR-7.
- *
- * @link https://github.com/php-fig/http-message/blob/master/src/StreamInterface.php
- */
 class Stream implements StreamInterface
 {
     /**
@@ -17,95 +13,83 @@ class Stream implements StreamInterface
      *
      * This is octal as per header stat.h
      */
-    const FSTAT_MODE_S_IFIFO = 0010000;
-
-    /**
-     * Resource modes
-     *
-     * @var  array
-     * @link http://php.net/manual/function.fopen.php
-     */
-    protected static $modes = [
-        'readable' => ['r', 'r+', 'w+', 'a+', 'x+', 'c+'],
-        'writable' => ['r+', 'w', 'w+', 'a', 'a+', 'x', 'x+', 'c', 'c+'],
-    ];
+    public const FSTAT_MODE_S_IFIFO = 0010000;
 
     /**
      * The underlying stream resource
      *
-     * @var resource
+     * @var resource|null
      */
     protected $stream;
 
     /**
-     * Stream metadata
-     *
-     * @var array
+     * @var array|null
      */
     protected $meta;
 
     /**
-     * Is this stream readable?
-     *
-     * @var bool
+     * @var bool|null
      */
     protected $readable;
 
     /**
-     * Is this stream writable?
-     *
-     * @var bool
+     * @var bool|null
      */
     protected $writable;
 
     /**
-     * Is this stream seekable?
-     *
-     * @var bool
+     * @var bool|null
      */
     protected $seekable;
 
     /**
-     * The size of the stream if known
-     *
      * @var null|int
      */
     protected $size;
 
     /**
-     * Is this stream a pipe?
-     *
-     * @var bool
+     * @var bool|null
      */
     protected $isPipe;
 
     /**
-     * @param  resource $stream A PHP resource handle.
+     * @var bool
+     */
+    protected $finished = false;
+
+    /**
+     * @var StreamInterface | null
+     */
+    protected $cache;
+
+    /**
+     * @param  resource $stream  A PHP resource handle.
+     * @param  StreamInterface $cache A stream to cache $stream (useful for non-seekable streams)
      *
      * @throws InvalidArgumentException If argument is not a resource.
      */
-    public function __construct($stream)
+    public function __construct($stream, StreamInterface $cache = null)
     {
         $this->attach($stream);
+
+        if ($cache && (!$cache->isSeekable() || !$cache->isWritable())) {
+            throw new RuntimeException('Cache stream must be seekable and writable');
+        }
+        $this->cache = $cache;
     }
 
     /**
-     * Get stream metadata as an associative array or retrieve a specific key.
-     *
-     * The keys returned are identical to the keys returned from PHP's stream_get_meta_data() function.
-     *
-     * @link http://php.net/manual/en/function.stream-get-meta-data.php
-     *
-     * @param string $key Specific metadata to retrieve.
-     *
-     * @return array|mixed|null Returns an associative array if no key is
-     *     provided. Returns a specific key value if a key is provided and the
-     *     value is found, or null if the key is not found.
+     * {@inheritdoc}
      */
     public function getMetadata($key = null)
     {
+        if (!$this->stream) {
+            return null;
+        }
+
         $this->meta = stream_get_meta_data($this->stream);
-        if (is_null($key) === true) {
+
+        if (!$key) {
             return $this->meta;
         }
 
@@ -113,45 +97,31 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Is a resource attached to this stream?
-     *
-     * Note: This method is not part of the PSR-7 standard.
-     *
-     * @return bool
-     */
-    protected function isAttached()
-    {
-        return is_resource($this->stream);
-    }
-
-    /**
      * Attach new resource to this object.
      *
-     * Note: This method is not part of the PSR-7 standard.
+     * @internal This method is not part of the PSR-7 standard.
      *
-     * @param resource $newStream A PHP resource handle.
+     * @param resource $stream A PHP resource handle.
      *
      * @throws InvalidArgumentException If argument is not a valid PHP resource.
+     *
+     * @return void
      */
-    protected function attach($newStream)
+    protected function attach($stream): void
     {
-        if (is_resource($newStream) === false) {
+        if (!is_resource($stream)) {
             throw new InvalidArgumentException(__METHOD__ . ' argument must be a valid PHP resource');
         }
 
-        if ($this->isAttached() === true) {
+        if ($this->stream) {
             $this->detach();
         }
 
-        $this->stream = $newStream;
+        $this->stream = $stream;
     }
 
     /**
-     * Separates any underlying resources from the stream.
-     *
-     * After the stream has been detached, the stream is in an unusable state.
-     *
-     * @return resource|null Underlying PHP stream, if any
+     * {@inheritdoc}
      */
     public function detach()
     {
@@ -164,44 +134,36 @@ class Stream implements StreamInterface
         $this->size = null;
         $this->isPipe = null;
 
+        $this->cache = null;
+        $this->finished = false;
+
         return $oldResource;
     }
 
     /**
-     * Reads all data from the stream into a string, from the beginning to end.
-     *
-     * This method MUST attempt to seek to the beginning of the stream before
-     * reading data and read the stream until the end is reached.
-     *
-     * Warning: This could attempt to load a large amount of data into memory.
-     *
-     * This method MUST NOT raise an exception in order to conform with PHP's
-     * string casting operations.
-     *
-     * @see http://php.net/manual/en/language.oop5.magic.php#object.tostring
-     *
-     * @return string
+     * {@inheritdoc}
      */
-    public function __toString()
+    public function __toString(): string
     {
-        if (!$this->isAttached()) {
+        if (!$this->stream) {
             return '';
         }
-
-        try {
+        if ($this->cache && $this->finished) {
+            $this->cache->rewind();
+            return $this->cache->getContents();
+        }
+        if ($this->isSeekable()) {
             $this->rewind();
-            return $this->getContents();
-        } catch (RuntimeException $e) {
-            return '';
         }
+        return $this->getContents();
     }
 
     /**
-     * Closes the stream and any underlying resources.
+     * {@inheritdoc}
      */
-    public function close()
+    public function close(): void
     {
-        if ($this->isAttached() === true) {
+        if ($this->stream) {
             if ($this->isPipe()) {
                 pclose($this->stream);
             } else {
@@ -213,65 +175,63 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Get the size of the stream if known.
-     *
-     * @return int|null Returns the size in bytes if known, or null if unknown.
+     * {@inheritdoc}
      */
-    public function getSize()
+    public function getSize(): ?int
     {
-        if (!$this->size && $this->isAttached() === true) {
+        if ($this->stream && !$this->size) {
             $stats = fstat($this->stream);
-            $this->size = isset($stats['size']) && !$this->isPipe() ? $stats['size'] : null;
+
+            if ($stats) {
+                $this->size = isset($stats['size']) && !$this->isPipe() ? $stats['size'] : null;
+            }
         }
 
         return $this->size;
     }
 
     /**
-     * Returns the current position of the file read/write pointer
-     *
-     * @return int Position of the file pointer
-     *
-     * @throws RuntimeException on error.
+     * {@inheritdoc}
      */
-    public function tell()
+    public function tell(): int
     {
-        if (!$this->isAttached() || ($position = ftell($this->stream)) === false || $this->isPipe()) {
-            throw new RuntimeException('Could not get the position of the pointer in stream');
+        $position = false;
+
+        if ($this->stream) {
+            $position = ftell($this->stream);
+        }
+
+        if ($position === false || $this->isPipe()) {
+            throw new RuntimeException('Could not get the position of the pointer in stream.');
         }
 
         return $position;
     }
 
     /**
-     * Returns true if the stream is at the end of the stream.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function eof()
+    public function eof(): bool
     {
-        return $this->isAttached() ? feof($this->stream) : true;
+        return $this->stream ? feof($this->stream) : true;
     }
 
     /**
-     * Returns whether or not the stream is readable.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isReadable()
+    public function isReadable(): bool
     {
         if ($this->readable === null) {
             if ($this->isPipe()) {
                 $this->readable = true;
             } else {
                 $this->readable = false;
-                if ($this->isAttached()) {
-                    $meta = $this->getMetadata();
-                    foreach (self::$modes['readable'] as $mode) {
-                        if (strpos($meta['mode'], $mode) === 0) {
-                            $this->readable = true;
-                            break;
-                        }
+
+                if ($this->stream) {
+                    $mode = $this->getMetadata('mode');
+
+                    if (strstr($mode, 'r') !== false || strstr($mode, '+') !== false) {
+                        $this->readable = true;
                     }
                 }
             }
@@ -281,21 +241,18 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Returns whether or not the stream is writable.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isWritable()
+    public function isWritable(): bool
     {
         if ($this->writable === null) {
             $this->writable = false;
-            if ($this->isAttached()) {
-                $meta = $this->getMetadata();
-                foreach (self::$modes['writable'] as $mode) {
-                    if (strpos($meta['mode'], $mode) === 0) {
-                        $this->writable = true;
-                        break;
-                    }
+
+            if ($this->stream) {
+                $mode = $this->getMetadata('mode');
+
+                if (strstr($mode, 'w') !== false || strstr($mode, '+') !== false) {
+                    $this->writable = true;
                 }
             }
         }
@@ -304,17 +261,15 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Returns whether or not the stream is seekable.
-     *
-     * @return bool
+     * {@inheritdoc}
      */
-    public function isSeekable()
+    public function isSeekable(): bool
     {
         if ($this->seekable === null) {
             $this->seekable = false;
-            if ($this->isAttached()) {
-                $meta = $this->getMetadata();
-                $this->seekable = !$this->isPipe() && $meta['seekable'];
+
+            if ($this->stream) {
+                $this->seekable = !$this->isPipe() && $this->getMetadata('seekable');
             }
         }
 
@@ -322,115 +277,115 @@ class Stream implements StreamInterface
     }
 
     /**
-     * Seek to a position in the stream.
-     *
-     * @link http://www.php.net/manual/en/function.fseek.php
-     *
-     * @param int $offset Stream offset
-     * @param int $whence Specifies how the cursor position will be calculated
-     *     based on the seek offset. Valid values are identical to the built-in
-     *     PHP $whence values for `fseek()`.  SEEK_SET: Set position equal to
-     *     offset bytes SEEK_CUR: Set position to current location plus offset
-     *     SEEK_END: Set position to end-of-stream plus offset.
-     *
-     * @throws RuntimeException If stream is not seekable
+     * {@inheritdoc}
      */
-    public function seek($offset, $whence = SEEK_SET)
+    public function seek($offset, $whence = SEEK_SET): void
     {
-        // Note that fseek returns 0 on success!
-        if (!$this->isSeekable() || fseek($this->stream, $offset, $whence) === -1) {
-            throw new RuntimeException('Could not seek in stream');
+        if (!$this->isSeekable() || $this->stream && fseek($this->stream, $offset, $whence) === -1) {
+            throw new RuntimeException('Could not seek in stream.');
         }
     }
 
     /**
-     * Seek to the beginning of the stream.
-     *
-     * If the stream is not seekable, this method will raise an exception;
-     * otherwise, it will perform a seek(0).
-     *
-     * @see seek()
-     *
-     * @link http://www.php.net/manual/en/function.fseek.php
-     *
-     * @throws RuntimeException on failure.
+     * {@inheritdoc}
      */
-    public function rewind()
+    public function rewind(): void
     {
-        if (!$this->isSeekable() || rewind($this->stream) === false) {
-            throw new RuntimeException('Could not rewind stream');
+        if (!$this->isSeekable() || $this->stream && rewind($this->stream) === false) {
+            throw new RuntimeException('Could not rewind stream.');
         }
     }
 
     /**
-     * Read data from the stream.
-     *
-     * @param int $length Read up to $length bytes from the object and return
-     *     them. Fewer than $length bytes may be returned if underlying stream
-     *     call returns fewer bytes.
-     *
-     * @return string Returns the data read from the stream, or an empty string if no bytes are available.
-     *
-     * @throws RuntimeException if an error occurs.
+     * {@inheritdoc}
      */
-    public function read($length)
+    public function read($length): string
     {
-        if (!$this->isReadable() || ($data = fread($this->stream, $length)) === false) {
-            throw new RuntimeException('Could not read from stream');
+        $data = false;
+
+        if ($this->isReadable() && $this->stream) {
+            $data = fread($this->stream, $length);
         }
 
-        return $data;
+        if (is_string($data)) {
+            if ($this->cache) {
+                $this->cache->write($data);
+            }
+            if ($this->eof()) {
+                $this->finished = true;
+            }
+            return $data;
+        }
+
+        throw new RuntimeException('Could not read from stream.');
     }
 
     /**
-     * Write data to the stream.
-     *
-     * @param string $string The string that is to be written.
-     *
-     * @return int Returns the number of bytes written to the stream.
-     *
-     * @throws RuntimeException If stream is not writable
+     * {@inheritdoc}
      */
     public function write($string)
     {
-        if (!$this->isWritable() || ($written = fwrite($this->stream, $string)) === false) {
-            throw new RuntimeException('Could not write to stream');
+        $written = false;
+
+        if ($this->isWritable() && $this->stream) {
+            $written = fwrite($this->stream, $string);
         }
 
-        // reset size so that it will be recalculated on next call to getSize()
-        $this->size = null;
+        if ($written !== false) {
+            $this->size = null;
+            return $written;
+        }
 
-        return $written;
+        throw new RuntimeException('Could not write to stream.');
     }
 
     /**
-     * Returns the remaining contents in a string
-     *
-     * @return string
-     *
-     * @throws RuntimeException If stream is not readable
+     * {@inheritdoc}
      */
-    public function getContents()
+    public function getContents(): string
     {
-        if (!$this->isReadable() || ($contents = stream_get_contents($this->stream)) === false) {
-            throw new RuntimeException('Could not get contents of stream');
+        if ($this->cache && $this->finished) {
+            $this->cache->rewind();
+            return $this->cache->getContents();
         }
 
-        return $contents;
+        $contents = false;
+
+        if ($this->stream) {
+            $contents = stream_get_contents($this->stream);
+        }
+
+        if (is_string($contents)) {
+            if ($this->cache) {
+                $this->cache->write($contents);
+            }
+            if ($this->eof()) {
+                $this->finished = true;
+            }
+            return $contents;
+        }
+
+        throw new RuntimeException('Could not get contents of stream.');
     }
 
     /**
      * Returns whether or not the stream is a pipe.
      *
+     * @internal This method is not part of the PSR-7 standard.
+     *
      * @return bool
      */
-    public function isPipe()
+    public function isPipe(): bool
     {
         if ($this->isPipe === null) {
             $this->isPipe = false;
-            if ($this->isAttached()) {
-                $mode = fstat($this->stream)['mode'];
-                $this->isPipe = ($mode & self::FSTAT_MODE_S_IFIFO) !== 0;
+
+            if ($this->stream) {
+                $stats = fstat($this->stream);
+
+                if (is_array($stats)) {
+                    $this->isPipe = isset($stats['mode']) && ($stats['mode'] & self::FSTAT_MODE_S_IFIFO) !== 0;
+                }
             }
         }
 

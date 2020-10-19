@@ -1,14 +1,16 @@
 <?php
+
 namespace Pluf\Tests;
 
 use PHPUnit\Framework\TestCase;
+use PHPUnit\Framework\MockObject\MockObject;
 use Pluf\Http\Headers;
+use Pluf\Http\Stream;
 use Pluf\Tests\Mocks\MessageStub;
-use Pluf\Http\Body;
+use InvalidArgumentException;
 
 class MessageTest extends TestCase
 {
-
     public function testGetProtocolVersion()
     {
         $message = new MessageStub();
@@ -26,29 +28,21 @@ class MessageTest extends TestCase
     }
 
     /**
-     *
-     * @expectedException InvalidArgumentException
      */
     public function testWithProtocolVersionInvalidThrowsException()
     {
+        $this->expectException(InvalidArgumentException::class);
+
         $message = new MessageStub();
         $message->withProtocolVersion('3.0');
-    }
-
-    public function testWithProtocolVersionForHttp2()
-    {
-        $message = new MessageStub();
-        $clone = $message->withProtocolVersion('2');
-
-        $this->assertEquals('2', $clone->protocolVersion);
     }
 
     public function testGetHeaders()
     {
         $headers = new Headers();
-        $headers->add('X-Foo', 'one');
-        $headers->add('X-Foo', 'two');
-        $headers->add('X-Foo', 'three');
+        $headers->addHeader('X-Foo', 'one');
+        $headers->addHeader('X-Foo', 'two');
+        $headers->addHeader('X-Foo', 'three');
 
         $message = new MessageStub();
         $message->headers = $headers;
@@ -57,8 +51,8 @@ class MessageTest extends TestCase
             'X-Foo' => [
                 'one',
                 'two',
-                'three'
-            ]
+                'three',
+            ],
         ];
 
         $this->assertEquals($shouldBe, $message->getHeaders());
@@ -67,7 +61,7 @@ class MessageTest extends TestCase
     public function testHasHeader()
     {
         $headers = new Headers();
-        $headers->add('X-Foo', 'one');
+        $headers->addHeader('X-Foo', 'one');
 
         $message = new MessageStub();
         $message->headers = $headers;
@@ -79,9 +73,9 @@ class MessageTest extends TestCase
     public function testGetHeaderLine()
     {
         $headers = new Headers();
-        $headers->add('X-Foo', 'one');
-        $headers->add('X-Foo', 'two');
-        $headers->add('X-Foo', 'three');
+        $headers->addHeader('X-Foo', 'one');
+        $headers->addHeader('X-Foo', 'two');
+        $headers->addHeader('X-Foo', 'three');
 
         $message = new MessageStub();
         $message->headers = $headers;
@@ -93,25 +87,21 @@ class MessageTest extends TestCase
     public function testGetHeader()
     {
         $headers = new Headers();
-        $headers->add('X-Foo', 'one');
-        $headers->add('X-Foo', 'two');
-        $headers->add('X-Foo', 'three');
+        $headers->addHeader('X-Foo', 'one');
+        $headers->addHeader('X-Foo', 'two');
+        $headers->addHeader('X-Foo', 'three');
 
         $message = new MessageStub();
         $message->headers = $headers;
 
-        $this->assertEquals([
-            'one',
-            'two',
-            'three'
-        ], $message->getHeader('X-Foo'));
+        $this->assertEquals(['one', 'two', 'three'], $message->getHeader('X-Foo'));
         $this->assertEquals([], $message->getHeader('X-Bar'));
     }
 
     public function testWithHeader()
     {
         $headers = new Headers();
-        $headers->add('X-Foo', 'one');
+        $headers->addHeader('X-Foo', 'one');
         $message = new MessageStub();
         $message->headers = $headers;
         $clone = $message->withHeader('X-Foo', 'bar');
@@ -122,7 +112,7 @@ class MessageTest extends TestCase
     public function testWithAddedHeader()
     {
         $headers = new Headers();
-        $headers->add('X-Foo', 'one');
+        $headers->addHeader('X-Foo', 'one');
         $message = new MessageStub();
         $message->headers = $headers;
         $clone = $message->withAddedHeader('X-Foo', 'two');
@@ -133,18 +123,27 @@ class MessageTest extends TestCase
     public function testWithoutHeader()
     {
         $headers = new Headers();
-        $headers->add('X-Foo', 'one');
-        $headers->add('X-Bar', 'two');
+        $headers->addHeader('X-Foo', 'one');
+        $headers->addHeader('X-Bar', 'two');
         $response = new MessageStub();
         $response->headers = $headers;
         $clone = $response->withoutHeader('X-Foo');
         $shouldBe = [
-            'X-Bar' => [
-                'two'
-            ]
+            'X-Bar' => ['two'],
         ];
 
         $this->assertEquals($shouldBe, $clone->getHeaders());
+    }
+
+    /**
+     * @doesNotPerformAssertions
+     */
+    public function testWithoutHeaderByIncompatibleStringWithRFC()
+    {
+        $headers = new Headers();
+        $response = new MessageStub();
+        $response->headers = $headers;
+        $response->withoutHeader('<incompatible with RFC');
     }
 
     public function testGetBody()
@@ -169,12 +168,12 @@ class MessageTest extends TestCase
     }
 
     /**
-     *
-     * @return Body
+     * @return MockObject|Stream
      */
     protected function getBody()
     {
-        return $this->getMockBuilder('Pluf\Http\Body')
+        return $this
+            ->getMockBuilder(Stream::class)
             ->disableOriginalConstructor()
             ->getMock();
     }

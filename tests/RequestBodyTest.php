@@ -22,15 +22,21 @@ class RequestBodyTest extends TestCase
     /**
      * Sets up the fixture, for example, open a network connection.
      * This method is called before a test is executed.
+     *
+     * @before
      */
-    protected function setUp()
+    public function setUpTestcase()
     {
         $this->body = new RequestBody();
         $this->body->write($this->text);
         $this->body->rewind();
     }
 
-    protected function tearDown()
+    /**
+     *
+     * @after
+     */
+    public function tearDownTestcase()
     {
         if (is_resource($this->stream) === true) {
             fclose($this->stream);

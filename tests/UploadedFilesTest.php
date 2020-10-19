@@ -19,14 +19,22 @@ class UploadedFilesTest extends TestCase
         './phpUxcOty'
     ];
 
-    public static function setUpBeforeClass()
+    /**
+     *
+     * @beforeClass
+     */
+    public static function setUpBeforeClasscall()
     {
         $fh = fopen(self::$filename, "w");
         fwrite($fh, "12345678");
         fclose($fh);
     }
 
-    public static function tearDownAfterClass()
+    /**
+     *
+     * @afterClass
+     */
+    public static function tearDownAfterClasscall()
     {
         foreach (self::$tmpFiles as $filename) {
             if (file_exists($filename)) {

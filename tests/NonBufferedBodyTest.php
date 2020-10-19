@@ -5,21 +5,22 @@ use PHPUnit\Framework\TestCase;
 use Pluf\Http\NonBufferedBody;
 use Pluf\Http\Response;
 use Pluf\Tests\Assets\HeaderStack;
+use RuntimeException;
 
 /**
- *
- * @runInSeparateProcess
+ * 
+ * @author maso
  *
  */
 class NonBufferedBodyTest extends TestCase
 {
 
-    protected function setUp()
+    protected function setUp(): void
     {
         HeaderStack::reset();
     }
 
-    protected function tearDown()
+    protected function tearDown(): void
     {
         HeaderStack::reset();
     }
@@ -27,10 +28,6 @@ class NonBufferedBodyTest extends TestCase
     public function testTheStreamContract()
     {
         $body = new NonBufferedBody();
-        $body->close();
-        $body->seek(0);
-        $body->rewind();
-
         self::assertSame('', (string) $body, 'Casting to string returns no data, since the class does not store any');
         self::assertNull($body->detach(), 'Returns null since there is no such underlying stream');
         self::assertNull($body->getSize(), 'Current size is undefined');
@@ -39,21 +36,13 @@ class NonBufferedBodyTest extends TestCase
         self::assertFalse($body->isSeekable(), 'Cannot seek');
         self::assertTrue($body->isWritable(), 'Body is writable');
         self::assertFalse($body->isReadable(), 'Body is not readable');
-        self::assertSame('', $body->read(10), 'Data cannot be retrieved once written');
         self::assertSame('', $body->getContents(), 'Data cannot be retrieved once written');
         self::assertNull($body->getMetadata(), 'Metadata mechanism is not implemented');
     }
 
-    /**
-     *
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
     public function testWrite()
     {
         $ob_initial_level = ob_get_level();
-        $this->outputBufferingActive = true;
-        $this->outputBufferingLevel = ob_get_level();
 
         // Start output buffering.
         ob_start();
@@ -82,11 +71,6 @@ class NonBufferedBodyTest extends TestCase
         $this->assertEquals('buffer content: hello world', $contents);
     }
 
-    /**
-     *
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
     public function testWithHeader()
     {
         (new Response())->withBody(new NonBufferedBody())->withHeader('Foo', 'Bar');
@@ -100,11 +84,6 @@ class NonBufferedBodyTest extends TestCase
         ], HeaderStack::stack());
     }
 
-    /**
-     *
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
     public function testWithAddedHeader()
     {
         (new Response())->withBody(new NonBufferedBody())
@@ -125,11 +104,6 @@ class NonBufferedBodyTest extends TestCase
         ], HeaderStack::stack());
     }
 
-    /**
-     *
-     * @runInSeparateProcess
-     * @preserveGlobalState disabled
-     */
     public function testWithoutHeader()
     {
         (new Response())->withBody(new NonBufferedBody())
@@ -137,5 +111,45 @@ class NonBufferedBodyTest extends TestCase
             ->withoutHeader('Foo');
 
         self::assertSame([], HeaderStack::stack());
+    }
+
+    /**
+     */
+    public function testCloseThrowsRuntimeException()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('A NonBufferedBody is not closable.');
+
+        (new NonBufferedBody())->close();
+    }
+
+    /**
+     */
+    public function testSeekThrowsRuntimeException()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('A NonBufferedBody is not seekable.');
+
+        (new NonBufferedBody())->seek(10);
+    }
+
+    /**
+     */
+    public function testRewindThrowsRuntimeException()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('A NonBufferedBody is not rewindable.');
+
+        (new NonBufferedBody())->rewind();
+    }
+
+    /**
+     */
+    public function testReadThrowsRuntimeException()
+    {
+        $this->expectException(RuntimeException::class);
+        $this->expectExceptionMessage('A NonBufferedBody is not readable.');
+
+        (new NonBufferedBody())->read(10);
     }
 }

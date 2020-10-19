@@ -1,8 +1,8 @@
 <?php
 namespace Pluf\Tests\Mocks;
 
-use Pluf\Http\Message;
 use Pluf\Http\HeadersInterface;
+use Pluf\Http\Message;
 use Psr\Http\Message\StreamInterface;
 
 class MessageStub extends Message
