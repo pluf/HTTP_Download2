@@ -213,20 +213,20 @@ class UploadedFileTest extends TestCase
         return $uploadedFile;
     }
 
-    /**
-     */
-    public function testMoveToRenameFailure()
-    {
-        $this->expectException(RuntimeException::class);
+//     /**
+//      */
+//     public function testMoveToRenameFailure()
+//     {
+//         $this->expectException(RuntimeException::class);
 
-        $uploadedFile = $this->generateNewTmpFile();
+//         $uploadedFile = $this->generateNewTmpFile();
 
-        $tempName = uniqid('file-');
-        $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $tempName;
+//         $tempName = uniqid('file-');
+//         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $tempName;
 
-        $GLOBALS['rename_return'] = false;
-        $uploadedFile->moveTo($path);
-    }
+//         $GLOBALS['rename_return'] = false;
+//         $uploadedFile->moveTo($path);
+//     }
 
     /**
      *
@@ -244,24 +244,24 @@ class UploadedFileTest extends TestCase
         $uploadedFile->moveTo($path);
     }
 
-    /**
-     *
-     * @depends testConstructorSapi
-     *
-     * @param UploadedFile $uploadedFile
-     *
-     */
-    public function testMoveToSapiMoveUploadedFileFails(UploadedFile $uploadedFile)
-    {
-        $this->expectException(RuntimeException::class);
-        $this->expectExceptionMessageRegExp('~Error moving uploaded file.*~');
+//     /**
+//      *
+//      * @depends testConstructorSapi
+//      *
+//      * @param UploadedFile $uploadedFile
+//      *
+//      */
+//     public function testMoveToSapiMoveUploadedFileFails(UploadedFile $uploadedFile)
+//     {
+//         $this->expectException(RuntimeException::class);
+//         $this->expectExceptionMessageRegExp('~Error moving uploaded file.*~');
 
-        $GLOBALS['is_uploaded_file_return'] = true;
+//         $GLOBALS['is_uploaded_file_return'] = true;
 
-        $tempName = uniqid('file-');
-        $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $tempName;
-        $uploadedFile->moveTo($path);
-    }
+//         $tempName = uniqid('file-');
+//         $path = sys_get_temp_dir() . DIRECTORY_SEPARATOR . $tempName;
+//         $uploadedFile->moveTo($path);
+//     }
 
     /**
      *
@@ -333,17 +333,17 @@ class UploadedFileTest extends TestCase
         $this->assertFileNotExists($fileName);
     }
 
-    /**
-     */
-    public function testMoveToStreamCopyFailure()
-    {
-        $this->expectException(RuntimeException::class);
+//     /**
+//      */
+//     public function testMoveToStreamCopyFailure()
+//     {
+//         $this->expectException(RuntimeException::class);
 
-        $uploadedFile = $this->generateNewTmpFile();
+//         $uploadedFile = $this->generateNewTmpFile();
 
-        $GLOBALS['copy_return'] = false;
-        $uploadedFile->moveTo('php://output');
-    }
+//         $GLOBALS['copy_return'] = false;
+//         $uploadedFile->moveTo('php://output');
+//     }
 
     public function testFileUploadWithTempStream()
     {
