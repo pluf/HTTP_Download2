@@ -62,6 +62,7 @@ class UriFactory implements UriFactoryInterface
 
         // Authority: Port
         $port = ! empty($globals['SERVER_PORT']) ? (int) $globals['SERVER_PORT'] : ($scheme === 'https' ? 443 : 80);
+        $matches = [];
         if (preg_match('/^(\[[a-fA-F0-9:.]+])(:\d+)?\z/', $host, $matches)) {
             $host = $matches[1];
 
