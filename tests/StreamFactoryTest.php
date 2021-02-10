@@ -4,7 +4,6 @@ namespace Pluf\Tests;
 use Interop\Http\Factory\StreamFactoryTestCase;
 use Pluf\Http\StreamFactory;
 use InvalidArgumentException;
-use RuntimeException;
 
 class StreamFactoryTest extends StreamFactoryTestCase
 {
