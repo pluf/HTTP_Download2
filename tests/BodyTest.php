@@ -61,6 +61,7 @@ class BodyTest extends TestCase
 
         $this->stream = 'foo';
         $body = new Stream($this->stream);
+        $this->assertNotNull($body);
     }
 
     public function testGetMetadata()
